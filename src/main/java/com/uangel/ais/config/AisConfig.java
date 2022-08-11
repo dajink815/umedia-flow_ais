@@ -38,6 +38,8 @@ public class AisConfig extends DefaultConfig {
     private static final String FIELD_AIWF_USER = "AIWF_USER";
     private static final String FIELD_AIWF_PORT = "AIWF_PORT";
     private static final String FIELD_AIWF_PASS = "AIWF_PASS";
+    private static final String FIELD_HB_TIMEOUT = "HB_TIMEOUT";
+
 
     // VALUE(COMMON)
     private int longCall;
@@ -59,6 +61,7 @@ public class AisConfig extends DefaultConfig {
     private String aiwfPass;
     private int rmqThreadSize;
     private int rmqQueueSize;
+    private int hbTimeout;
 
     // VALUE(SIP)
     private String serverIp;
@@ -113,7 +116,7 @@ public class AisConfig extends DefaultConfig {
     }
 
     private void loadCommonConfig() {
-        this.longCall = getIntValue(SECTION_COMMON, FIELD_LONG_CALL, 410);
+        this.longCall = getIntValue(SECTION_COMMON, FIELD_LONG_CALL, 410000);
         this.threadSize = getIntValue(SECTION_COMMON, FIELD_THREAD_SIZE, 5);
         this.queueSize = getIntValue(SECTION_COMMON, FIELD_QUEUE_SIZE, 5);
     }
@@ -133,6 +136,7 @@ public class AisConfig extends DefaultConfig {
         this.aiwfPass = getStrValue(SECTION_RMQ, FIELD_AIWF_PASS, "");
         this.rmqThreadSize = getIntValue(SECTION_RMQ, FIELD_THREAD_SIZE, 5);
         this.rmqQueueSize = getIntValue(SECTION_RMQ, FIELD_QUEUE_SIZE, 5);
+        this.hbTimeout = getIntValue(SECTION_RMQ, FIELD_HB_TIMEOUT, 5000);
     }
 
     private void loadSipConfig() {
@@ -212,6 +216,9 @@ public class AisConfig extends DefaultConfig {
     }
     public int getRmqQueueSize() {
         return rmqQueueSize;
+    }
+    public int getHbTimeout() {
+        return hbTimeout;
     }
 
     // SIP

@@ -66,8 +66,6 @@ public class ServiceManager {
         } catch (Exception e) {
             log.error("IntervalTaskManager.start.Exception", e);
         }
-
-
     }
 
     private void stopService() {
