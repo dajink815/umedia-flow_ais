@@ -1,6 +1,8 @@
-package com.uangel.ais.rmq.handler.incoming;
+package com.uangel.ais.rmq.handler;
 
 import com.uangel.ais.config.AisConfig;
+import com.uangel.ais.rmq.handler.aim.RmqAimConsumer;
+import com.uangel.ais.rmq.handler.aiwf.RmqAiwfConsumer;
 import com.uangel.ais.service.AppInstance;
 import com.uangel.ais.util.SleepUtil;
 import com.uangel.rmq.message.RmqMessage;

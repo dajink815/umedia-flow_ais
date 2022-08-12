@@ -1,9 +1,9 @@
-package com.uangel.ais.rmq.util;
+package com.uangel.ais.rmq.common;
 
 import com.uangel.ais.service.AppInstance;
 import com.uangel.ais.util.DateFormatUtil;
 import com.uangel.rmq.message.RmqHeader;
-import com.uangel.ais.rmq.types.RmqMsgType;
+import com.uangel.ais.rmq.common.RmqMsgType;
 
 import java.util.UUID;
 

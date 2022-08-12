@@ -2,7 +2,7 @@ package com.uangel.ais.rmq;
 
 import com.uangel.ais.config.AisConfig;
 import com.uangel.ais.service.AppInstance;
-import com.uangel.ais.rmq.handler.incoming.RmqConsumer;
+import com.uangel.ais.rmq.handler.RmqConsumer;
 import com.uangel.rmq.message.RmqMessage;
 import com.uangel.ais.rmq.module.RmqClient;
 import com.uangel.ais.rmq.module.RmqServer;

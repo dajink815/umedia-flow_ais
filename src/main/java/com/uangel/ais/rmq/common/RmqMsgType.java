@@ -1,4 +1,4 @@
-package com.uangel.ais.rmq.types;
+package com.uangel.ais.rmq.common;
 
 /**
  * @author dajin kim
@@ -10,6 +10,8 @@ public class RmqMsgType {
     }
 
     // AIS - AIM
+    public static final String M_LOGIN_REQ = "M_LOGIN_REQ";
+    public static final String M_LOGIN_RES = "M_LOGIN_RES";
     public static final String M_HB_REQ = "M_HB_REQ";
     public static final String M_HB_RES = "M_HB_RES";
     public static final String OFFER_REQ = "OFFER_REQ";

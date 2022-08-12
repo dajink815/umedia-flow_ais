@@ -1,4 +1,4 @@
-package com.uangel.ais.rmq.handler.outgoing;
+package com.uangel.ais.rmq.handler;
 
 import com.uangel.ais.config.AisConfig;
 import com.uangel.ais.util.StringUtil;
@@ -18,19 +18,10 @@ import org.slf4j.LoggerFactory;
 public class RmqOutgoingMessage {
     static final Logger log = LoggerFactory.getLogger(RmqOutgoingMessage.class);
     private static final Suppress suppr = new Suppress(1000L * 30);
-    private RmqMessage rmqMessage;
-    private String target;
-
-    public RmqOutgoingMessage(RmqMessage rmqMessage) {
-        this.rmqMessage = rmqMessage;
-    }
+    private final String target;
 
     public RmqOutgoingMessage(String target) {
         this.target = target;
-    }
-
-    public boolean sendTo(String target) {
-        return sendTo(target, this.rmqMessage);
     }
 
     public boolean sendTo(RmqMessage rmqMessage) {
