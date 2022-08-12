@@ -1,5 +1,7 @@
 package com.uangel.ais.session.model;
 
+import com.uangel.ais.session.state.CallState;
+import com.uangel.ais.session.state.RmqState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import stack.java.uangel.sip.ClientTransaction;
@@ -23,6 +25,11 @@ public class CallInfo {
     private final long createTime;
     private long lastRmqTime;
 
+    // State
+    private CallState callState;
+    private RmqState rmqState;
+
+    // SIP 정보
     private String toMdn;
     private String fromMdn;
     private String toIp;
@@ -54,11 +61,13 @@ public class CallInfo {
         this.callId = callId;
         this.createTime = System.currentTimeMillis();
         this.setLogHeader();
+        // status
+        this.callState = CallState.NEW;
+        this.rmqState = RmqState.NEW;
     }
 
     public void setLogHeader() {
-        this.logHeader = "() ("+ (this.callId != null ? this.callId : "")
-                + ") () ";
+        this.logHeader = "() ("+ this.callId + ") () ";
     }
 
     // lock methods
@@ -82,11 +91,9 @@ public class CallInfo {
     public String getCallId() {
         return callId;
     }
-
     public long getCreateTime() {
         return createTime;
     }
-
     public String getLogHeader() {
         return logHeader;
     }
@@ -94,15 +101,35 @@ public class CallInfo {
     public long getLastRmqTime() {
         return lastRmqTime;
     }
-
     public void setLastRmqTime(long lastRmqTime) {
         this.lastRmqTime = lastRmqTime;
     }
 
+    // State
+    public CallState getCallState() {
+        return callState;
+    }
+    public void setCallState(CallState callState) {
+        if (this.callState == null || !this.callState.equals(callState)) {
+            log.info("{}CALL Status Changed [{}] --> [{}]", logHeader, this.callState, callState);
+            this.callState = callState;
+        }
+    }
+
+    public RmqState getRmqState() {
+        return rmqState;
+    }
+    public void setRmqState(RmqState rmqState) {
+        if (this.rmqState == null || !this.rmqState.equals(rmqState)) {
+            log.info("{}RMQ Status Changed [{}] --> [{}]", logHeader, this.rmqState, rmqState);
+            this.rmqState = rmqState;
+        }
+    }
+
+    // SIP 정보
     public String getToMdn() {
         return toMdn;
     }
-
     public void setToMdn(String toMdn) {
         this.toMdn = toMdn;
     }
@@ -110,7 +137,6 @@ public class CallInfo {
     public String getFromMdn() {
         return fromMdn;
     }
-
     public void setFromMdn(String fromMdn) {
         this.fromMdn = fromMdn;
     }
@@ -118,7 +144,6 @@ public class CallInfo {
     public String getToIp() {
         return toIp;
     }
-
     public void setToIp(String toIp) {
         this.toIp = toIp;
     }
@@ -126,7 +151,6 @@ public class CallInfo {
     public String getFromIp() {
         return fromIp;
     }
-
     public void setFromIp(String fromIp) {
         this.fromIp = fromIp;
     }
@@ -134,7 +158,6 @@ public class CallInfo {
     public int getToPort() {
         return toPort;
     }
-
     public void setToPort(int toPort) {
         this.toPort = toPort;
     }
@@ -142,7 +165,6 @@ public class CallInfo {
     public int getFromPort() {
         return fromPort;
     }
-
     public void setFromPort(int fromPort) {
         this.fromPort = fromPort;
     }
@@ -150,7 +172,6 @@ public class CallInfo {
     public String getToTag() {
         return toTag;
     }
-
     public void setToTag(String toTag) {
         this.toTag = toTag;
     }
@@ -158,7 +179,6 @@ public class CallInfo {
     public String getFromTag() {
         return fromTag;
     }
-
     public void setFromTag(String fromTag) {
         this.fromTag = fromTag;
     }
@@ -166,7 +186,6 @@ public class CallInfo {
     public String getToAddress() {
         return toAddress;
     }
-
     public void setToAddress(String toAddress) {
         this.toAddress = toAddress;
     }
@@ -174,7 +193,6 @@ public class CallInfo {
     public String getFromAddress() {
         return fromAddress;
     }
-
     public void setFromAddress(String fromAddress) {
         this.fromAddress = fromAddress;
     }
@@ -182,7 +200,6 @@ public class CallInfo {
     public long getcSeq() {
         return cSeq;
     }
-
     public void setcSeq(long cSeq) {
         this.cSeq = cSeq;
     }
@@ -190,7 +207,6 @@ public class CallInfo {
     public String getSdp() {
         return sdp;
     }
-
     public void setSdp(String sdp) {
         this.sdp = sdp;
     }
@@ -198,7 +214,6 @@ public class CallInfo {
     public ConcurrentMap<String, List<String>> getRequestHeader() {
         return requestHeader;
     }
-
     public void setRequestHeader(ConcurrentMap<String, List<String>> requestHeader) {
         this.requestHeader = requestHeader;
     }
@@ -206,7 +221,6 @@ public class CallInfo {
     public ConcurrentMap<String, List<String>> getResponseHeader() {
         return responseHeader;
     }
-
     public void setResponseHeader(ConcurrentMap<String, List<String>> responseHeader) {
         this.responseHeader = responseHeader;
     }
@@ -214,7 +228,6 @@ public class CallInfo {
     public ServerTransaction getSt() {
         return st;
     }
-
     public void setSt(ServerTransaction st) {
         this.st = st;
     }
@@ -222,7 +235,6 @@ public class CallInfo {
     public ClientTransaction getCt() {
         return ct;
     }
-
     public void setCt(ClientTransaction ct) {
         this.ct = ct;
     }
@@ -230,7 +242,6 @@ public class CallInfo {
     public ClientTransaction getCancelCt() {
         return cancelCt;
     }
-
     public void setCancelCt(ClientTransaction cancelCt) {
         this.cancelCt = cancelCt;
     }
@@ -238,7 +249,6 @@ public class CallInfo {
     public Dialog getDialog() {
         return dialog;
     }
-
     public void setDialog(Dialog dialog) {
         this.dialog = dialog;
     }
@@ -246,7 +256,6 @@ public class CallInfo {
     public List<ViaHeader> getViaHeader() {
         return viaHeader;
     }
-
     public void setViaHeader(List<ViaHeader> viaHeader) {
         this.viaHeader = viaHeader;
     }
@@ -254,7 +263,6 @@ public class CallInfo {
     public String getInviteMsg() {
         return inviteMsg;
     }
-
     public void setInviteMsg(String inviteMsg) {
         this.inviteMsg = inviteMsg;
     }
@@ -262,7 +270,6 @@ public class CallInfo {
     public String getStartSipMsg() {
         return startSipMsg;
     }
-
     public void setStartSipMsg(String startSipMsg) {
         this.startSipMsg = startSipMsg;
     }
@@ -270,7 +277,6 @@ public class CallInfo {
     public String getStopSipMsg() {
         return stopSipMsg;
     }
-
     public void setStopSipMsg(String stopSipMsg) {
         this.stopSipMsg = stopSipMsg;
     }

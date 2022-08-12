@@ -54,6 +54,7 @@ public class CallManager {
         return callInfo;
     }
 
+    // Transaction 정리
     public void deleteCallInfo(String callId) {
         if (callId == null) return;
         if (callInfoMap.remove(callId) != null) {
