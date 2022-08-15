@@ -2,8 +2,8 @@ package com.uangel.ais.rmq.handler.aim.outgoing;
 
 import com.uangel.ais.rmq.common.RmqBuilder;
 import com.uangel.ais.rmq.handler.aim.RmqAimOutgoing;
-import com.uangel.rmq.message.RmqHeader;
-import com.uangel.rmq.message.RmqMessage;
+import com.uangel.protobuf.Header;
+import com.uangel.protobuf.Message;
 
 /**
  * @author dajin kim
@@ -15,10 +15,10 @@ public class RmqMLoginRes extends RmqAimOutgoing {
     }
 
     public boolean send(String tId, String msgType) {
-        RmqHeader.Builder headerBuilder = RmqBuilder.getDefaultHeader(msgType);
+        Header.Builder headerBuilder = RmqBuilder.getDefaultHeader(msgType);
         headerBuilder.setTId(tId);
 
-        RmqMessage msg = RmqMessage.newBuilder()
+        Message msg = Message.newBuilder()
                 .setHeader(headerBuilder.build())
                 .build();
 

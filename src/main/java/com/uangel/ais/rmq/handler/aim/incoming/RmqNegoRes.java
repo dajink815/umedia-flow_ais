@@ -1,6 +1,6 @@
 package com.uangel.ais.rmq.handler.aim.incoming;
 
-import com.uangel.rmq.message.RmqMessage;
+import com.uangel.protobuf.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,7 +14,7 @@ public class RmqNegoRes {
         // nothing
     }
 
-    public void handle(RmqMessage msg) {
+    public void handle(Message msg) {
         // negoRes Fail -> Error Response -> hangup, CallStop
 
         // AIM -> sdp 받아서 200ok

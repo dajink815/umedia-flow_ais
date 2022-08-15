@@ -142,7 +142,7 @@ public class AisConfig extends DefaultConfig {
     private void loadSipConfig() {
         this.serverIp = getStrValue(SECTION_SIP, FIELD_SERVER_IP, "127.0.0.1");
         this.serverPort = getIntValue(SECTION_SIP, FIELD_SERVER_PORT, 5060);
-        this.stackName = getStrValue(SECTION_SIP, FIELD_STACK_NAME, "UMEDIA");
+        this.stackName = getStrValue(SECTION_SIP, FIELD_STACK_NAME, "AICALL");
 
         this.automaticDialogSupport = getStrValue(SECTION_SIP, "AUTOMATIC_DIALOG_SUPPORT", "off");
         this.logMessageContent = getStrValue(SECTION_SIP, "LOG_MESSAGE_CONTENT", "true");

@@ -2,7 +2,7 @@ package com.uangel.ais.rmq.common;
 
 import com.uangel.ais.service.AppInstance;
 import com.uangel.ais.util.DateFormatUtil;
-import com.uangel.rmq.message.RmqHeader;
+import com.uangel.protobuf.Header;
 import com.uangel.ais.rmq.common.RmqMsgType;
 
 import java.util.UUID;
@@ -16,8 +16,8 @@ public class RmqBuilder {
         // nothing
     }
 
-    public static RmqHeader.Builder getDefaultHeader(String type) {
-        return RmqHeader.newBuilder()
+    public static Header.Builder getDefaultHeader(String type) {
+        return Header.newBuilder()
                 .setType(type)
                 .setTId(UUID.randomUUID().toString())
                 .setMsgFrom(AppInstance.getInstance().getConfig().getAiif())
@@ -26,8 +26,8 @@ public class RmqBuilder {
                 .setTimestamp(DateFormatUtil.currentTimeStamp());
     }
 
-    public static RmqHeader.Builder getFailHeader(String type, String reason, int reasonCode) {
-        return RmqHeader.newBuilder()
+    public static Header.Builder getFailHeader(String type, String reason, int reasonCode) {
+        return Header.newBuilder()
                 .setType(type)
                 .setTId(UUID.randomUUID().toString())
                 .setMsgFrom(AppInstance.getInstance().getConfig().getAiif())

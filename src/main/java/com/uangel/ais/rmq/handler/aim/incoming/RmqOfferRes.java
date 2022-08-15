@@ -1,6 +1,6 @@
 package com.uangel.ais.rmq.handler.aim.incoming;
 
-import com.uangel.rmq.message.RmqMessage;
+import com.uangel.protobuf.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -14,7 +14,7 @@ public class RmqOfferRes {
         // nothing
     }
 
-    public void handle(RmqMessage msg) {
+    public void handle(Message msg) {
         // offerRes Fail -> Error Response -> hangup, CallStop
 
         // 180 Ringing

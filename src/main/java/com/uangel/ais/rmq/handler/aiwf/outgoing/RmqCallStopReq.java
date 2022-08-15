@@ -3,9 +3,9 @@ package com.uangel.ais.rmq.handler.aiwf.outgoing;
 import com.uangel.ais.rmq.common.RmqBuilder;
 import com.uangel.ais.rmq.handler.aiwf.RmqAiwfOutgoing;
 import com.uangel.ais.session.model.CallInfo;
-import com.uangel.rmq.message.CallStopReq;
-import com.uangel.rmq.message.RmqHeader;
-import com.uangel.rmq.message.RmqMessage;
+import com.uangel.protobuf.CallStopReq;
+import com.uangel.protobuf.Header;
+import com.uangel.protobuf.Message;
 
 /**
  * @author dajin kim
@@ -17,8 +17,8 @@ public class RmqCallStopReq extends RmqAiwfOutgoing {
     }
 
     public boolean send(CallInfo callInfo, String msgType) {
-        RmqHeader.Builder headerBuilder = RmqBuilder.getDefaultHeader(msgType);
-        RmqMessage msg = RmqMessage.newBuilder()
+        Header.Builder headerBuilder = RmqBuilder.getDefaultHeader(msgType);
+        Message msg = Message.newBuilder()
                 .setHeader(headerBuilder.build())
                 .setCallStopReq(CallStopReq.newBuilder()
                         .setCallId(callInfo.getCallId()))
@@ -28,8 +28,8 @@ public class RmqCallStopReq extends RmqAiwfOutgoing {
     }
 
     public boolean send(CallInfo callInfo, String msgType, int reasonCode, String reason) {
-        RmqHeader.Builder headerBuilder = RmqBuilder.getFailHeader(msgType, reason, reasonCode);
-        RmqMessage msg = RmqMessage.newBuilder()
+        Header.Builder headerBuilder = RmqBuilder.getFailHeader(msgType, reason, reasonCode);
+        Message msg = Message.newBuilder()
                 .setHeader(headerBuilder.build())
                 .setCallStopReq(CallStopReq.newBuilder()
                         .setCallId(callInfo.getCallId()))

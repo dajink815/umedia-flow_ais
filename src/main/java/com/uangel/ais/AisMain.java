@@ -8,8 +8,8 @@ import org.slf4j.LoggerFactory;
 /**
  * @author dajin kim
  */
-public class UMediaFlowAisMain {
-    static final Logger log = LoggerFactory.getLogger(UMediaFlowAisMain.class);
+public class AisMain {
+    static final Logger log = LoggerFactory.getLogger(AisMain.class);
 
     public static void main(String[] args) {
         log.info("Process Start [{}]", args[0]);

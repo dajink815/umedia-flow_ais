@@ -2,7 +2,7 @@ package com.uangel.ais.service;
 
 import com.uangel.ais.config.AisConfig;
 import com.uangel.ais.signal.module.SipSignal;
-import com.uangel.rmq.message.RmqMessage;
+import com.uangel.protobuf.Message;
 import stack.java.uangel.sip.RequestEvent;
 import stack.java.uangel.sip.ResponseEvent;
 
@@ -23,7 +23,7 @@ public class AppInstance {
     private AisConfig aisConfig = null;
 
     // RMQ
-    private BlockingQueue<RmqMessage> rmqMsgQueue;
+    private BlockingQueue<Message> rmqMsgQueue;
 
     private AppInstance() {
         // nothing
@@ -71,10 +71,10 @@ public class AppInstance {
         this.aisConfig = config;
     }
 
-    public BlockingQueue<RmqMessage> getRmqMsgQueue() {
+    public BlockingQueue<Message> getRmqMsgQueue() {
         return rmqMsgQueue;
     }
-    public void setRmqMsgQueue(BlockingQueue<RmqMessage> rmqMsgQueue) {
+    public void setRmqMsgQueue(BlockingQueue<Message> rmqMsgQueue) {
         this.rmqMsgQueue = rmqMsgQueue;
     }
 }

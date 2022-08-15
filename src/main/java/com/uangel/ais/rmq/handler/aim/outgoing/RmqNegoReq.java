@@ -3,9 +3,9 @@ package com.uangel.ais.rmq.handler.aim.outgoing;
 import com.uangel.ais.rmq.common.RmqBuilder;
 import com.uangel.ais.rmq.handler.aim.RmqAimOutgoing;
 import com.uangel.ais.session.model.CallInfo;
-import com.uangel.rmq.message.NegoReq;
-import com.uangel.rmq.message.RmqHeader;
-import com.uangel.rmq.message.RmqMessage;
+import com.uangel.protobuf.Header;
+import com.uangel.protobuf.Message;
+import com.uangel.protobuf.NegoReq;
 
 /**
  * @author dajin kim
@@ -17,8 +17,8 @@ public class RmqNegoReq extends RmqAimOutgoing {
     }
 
     public boolean send(CallInfo callInfo, String msgType) {
-        RmqHeader.Builder headerBuilder = RmqBuilder.getDefaultHeader(msgType);
-        RmqMessage msg = RmqMessage.newBuilder()
+        Header.Builder headerBuilder = RmqBuilder.getDefaultHeader(msgType);
+        Message msg = Message.newBuilder()
                 .setHeader(headerBuilder.build())
                 .setNegoReq(NegoReq.newBuilder()
                         .setCallId(callInfo.getCallId())

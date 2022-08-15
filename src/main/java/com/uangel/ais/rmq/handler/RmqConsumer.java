@@ -5,7 +5,7 @@ import com.uangel.ais.rmq.handler.aim.RmqAimConsumer;
 import com.uangel.ais.rmq.handler.aiwf.RmqAiwfConsumer;
 import com.uangel.ais.service.AppInstance;
 import com.uangel.ais.util.SleepUtil;
-import com.uangel.rmq.message.RmqMessage;
+import com.uangel.protobuf.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,10 +18,10 @@ import java.util.concurrent.TimeUnit;
 public class RmqConsumer implements Runnable {
     static final Logger log = LoggerFactory.getLogger(RmqConsumer.class);
     private final AisConfig config = AppInstance.getInstance().getConfig();
-    private final BlockingQueue<RmqMessage> rmqMsgQueue;
+    private final BlockingQueue<Message> rmqMsgQueue;
     private boolean isQuit = false;
 
-    public RmqConsumer(BlockingQueue<RmqMessage> queue) {
+    public RmqConsumer(BlockingQueue<Message> queue) {
         this.rmqMsgQueue = queue;
     }
 
@@ -33,7 +33,7 @@ public class RmqConsumer implements Runnable {
     private void queueProcessing() {
         while (!isQuit) {
             try {
-                RmqMessage rmqMsg = rmqMsgQueue.poll(10, TimeUnit.MILLISECONDS);
+                Message rmqMsg = rmqMsgQueue.poll(10, TimeUnit.MILLISECONDS);
 
                 if (rmqMsg == null) {
                     SleepUtil.trySleep(10);
@@ -49,7 +49,7 @@ public class RmqConsumer implements Runnable {
         }
     }
 
-    private void messageProcessing(RmqMessage msg) {
+    private void messageProcessing(Message msg) {
         String msgFrom = msg.getHeader().getMsgFrom();
         if (config.getAiwf().contains(msgFrom)) {
             RmqAiwfConsumer consumer = new RmqAiwfConsumer();

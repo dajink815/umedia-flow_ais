@@ -4,8 +4,8 @@ import com.uangel.ais.config.AisConfig;
 import com.uangel.ais.util.StringUtil;
 import com.google.protobuf.util.JsonFormat;
 import com.uangel.ais.rmq.RmqManager;
-import com.uangel.rmq.message.RmqHeader;
-import com.uangel.rmq.message.RmqMessage;
+import com.uangel.protobuf.Header;
+import com.uangel.protobuf.Message;
 import com.uangel.ais.rmq.module.RmqClient;
 import com.uangel.ais.service.AppInstance;
 import com.uangel.ais.util.Suppress;
@@ -24,11 +24,11 @@ public class RmqOutgoingMessage {
         this.target = target;
     }
 
-    public boolean sendTo(RmqMessage rmqMessage) {
+    public boolean sendTo(Message rmqMessage) {
         return sendTo(this.target, rmqMessage);
     }
 
-    public boolean sendTo(String target, RmqMessage rmqMessage) {
+    public boolean sendTo(String target, Message rmqMessage) {
         boolean result = false;
 
         AisConfig config = AppInstance.getInstance().getConfig();
@@ -39,10 +39,10 @@ public class RmqOutgoingMessage {
         try {
             String json = JsonFormat.printer().includingDefaultValueFields().print(rmqMessage);
 
-            RmqHeader header = rmqMessage.getHeader();
+            Header header = rmqMessage.getHeader();
             String msgType = header.getType();
 
-            if (rmqMessage.getBodyCase().getNumber() == RmqMessage.IHBREQ_FIELD_NUMBER) {
+            if (rmqMessage.getBodyCase().getNumber() == Message.IHBREQ_FIELD_NUMBER) {
                 //if (suppr.touch(msgType + header.getMsgFrom())) {
                     log.info("[RMQ MESSAGE] send [{}] [{}] --> [{}]", msgType, header.getReasonCode(), target);
                     log.debug("[RMQ MESSAGE] Json --> {}", json);

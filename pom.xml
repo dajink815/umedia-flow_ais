@@ -4,8 +4,8 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>com.uangel.umediaflow</groupId>
-    <artifactId>umedia-flow_ais</artifactId>
+    <groupId>media.platform</groupId>
+    <artifactId>AIS</artifactId>
     <version>1.0.0</version>
     <packaging>jar</packaging>
 
@@ -25,6 +25,9 @@
             <releases>
                 <enabled>true</enabled>
             </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
         </repository>
     </repositories>
 
@@ -98,8 +101,8 @@ number of the protoc.-->
         </dependency>
 
         <dependency>
-            <groupId>com.uangel.rmq.message</groupId>
-            <artifactId>umedia_flow_rmqmsg</artifactId>
+            <groupId>com.uangel.protobuf</groupId>
+            <artifactId>aipbmsg</artifactId>
             <version>1.0.0</version>
         </dependency>
 
@@ -116,8 +119,6 @@ number of the protoc.-->
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
-                <!-- java version upgrade (8 -> 11) -->
-                <!--<version>2.3.2</version>-->
                 <version>3.8.0</version>
                 <configuration>
                     <source>${java.version}</source>
@@ -162,10 +163,10 @@ number of the protoc.-->
                             <descriptorRefs>
                                 <descriptorRef>jar-with-dependencies</descriptorRef>
                             </descriptorRefs>
-                            <finalName>umedia-flow_ais</finalName>
+                            <finalName>ais</finalName>
                             <archive>
                                 <manifest>
-                                    <mainClass>com.uangel.ais.UMediaFlowAisMain</mainClass>
+                                    <mainClass>com.uangel.ais.AisMain</mainClass>
                                 </manifest>
                             </archive>
                         </configuration>
@@ -180,7 +181,7 @@ number of the protoc.-->
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>media.platform.a2s.ConvertibleCall_A2sMain</mainClass>
+                            <mainClass>com.uangel.ais.AisMain</mainClass>
                         </manifest>
                     </archive>
                 </configuration>

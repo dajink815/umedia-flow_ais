@@ -11,8 +11,8 @@ import com.uangel.ais.util.DateFormatUtil;
 import com.uangel.ais.util.PasswdDecryptor;
 import com.uangel.ais.util.Suppress;
 import com.google.protobuf.util.JsonFormat;
-import com.uangel.rmq.message.RmqHeader;
-import com.uangel.rmq.message.RmqMessage;
+import com.uangel.protobuf.Header;
+import com.uangel.protobuf.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,7 +31,7 @@ public class RmqServer {
     private static final Suppress suppr = new Suppress(1000L * 30);
 
     private RmqReceiver rmqReceiver = null;
-    private final BlockingQueue<RmqMessage> queue;
+    private final BlockingQueue<Message> queue;
 
     private final String host;
     private final String user;
@@ -84,9 +84,9 @@ public class RmqServer {
         @Override
         public void onReceived(byte[] msg, Date ts) {
             String prettyMsg = null;
-            RmqMessage rmqMsg = null;
+            Message rmqMsg = null;
             try {
-                rmqMsg = RmqMessage.parseFrom(msg);
+                rmqMsg = Message.parseFrom(msg);
                 prettyMsg = JsonFormat.printer().includingDefaultValueFields().print(rmqMsg);
             } catch (Exception e) {
                 log.error("RmqServer.parseMessage", e);
@@ -94,17 +94,17 @@ public class RmqServer {
 
             if (rmqMsg == null) {
                 String strMsg = new String(msg, StandardCharsets.UTF_8);
-                log.warn("RmqServer.MessageCallback.onReceived - RmqMessage is Null \r\n[{}]", strMsg);
+                log.warn("RmqServer.MessageCallback.onReceived - Message is Null \r\n[{}]", strMsg);
                 return;
             }
 
-            RmqHeader header = rmqMsg.getHeader();
+            Header header = rmqMsg.getHeader();
             int reasonCode = header.getReasonCode();
             String msgType = header.getType();
             String msgFrom = header.getMsgFrom();
 
             // HB
-            if (rmqMsg.getBodyCase().getNumber() == RmqMessage.IHBRES_FIELD_NUMBER) {
+            if (rmqMsg.getBodyCase().getNumber() == Message.IHBRES_FIELD_NUMBER) {
                 if (suppr.touch(msgType + msgFrom)) {
                     log.info("() () () [RMQ MESSAGE] onReceived [{}] [{}] <-- [{}]", msgType, reasonCode, msgFrom);
                     printMsg(prettyMsg, ts);
