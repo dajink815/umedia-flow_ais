@@ -104,11 +104,12 @@ public class RmqServer {
             String msgFrom = header.getMsgFrom();
 
             // HB
-            if (rmqMsg.getBodyCase().getNumber() == Message.IHBRES_FIELD_NUMBER) {
-                if (suppr.touch(msgType + msgFrom)) {
-                    log.info("() () () [RMQ MESSAGE] onReceived [{}] [{}] <-- [{}]", msgType, reasonCode, msgFrom);
+            if (rmqMsg.getBodyCase().getNumber() == Message.MHBREQ_FIELD_NUMBER
+                    || rmqMsg.getBodyCase().getNumber() == Message.WHBREQ_FIELD_NUMBER) {
+                //if (suppr.touch(msgType + msgFrom)) {
+                    log.info("[RMQ MESSAGE] onReceived [{}] [{}] <-- [{}]", msgType, reasonCode, msgFrom);
                     printMsg(prettyMsg, ts);
-                }
+                //}
             } else {
                 log.info("[RMQ MESSAGE] onReceived [{}] [{}] <-- [{}]", msgType, reasonCode, msgFrom);
                 printMsg(prettyMsg, ts);

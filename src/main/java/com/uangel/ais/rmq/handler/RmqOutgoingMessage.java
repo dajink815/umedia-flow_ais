@@ -42,7 +42,8 @@ public class RmqOutgoingMessage {
             Header header = rmqMessage.getHeader();
             String msgType = header.getType();
 
-            if (rmqMessage.getBodyCase().getNumber() == Message.IHBREQ_FIELD_NUMBER) {
+            if (rmqMessage.getBodyCase().getNumber() == Message.MHBRES_FIELD_NUMBER
+                    || rmqMessage.getBodyCase().getNumber() == Message.WHBRES_FIELD_NUMBER) {
                 //if (suppr.touch(msgType + header.getMsgFrom())) {
                     log.info("[RMQ MESSAGE] send [{}] [{}] --> [{}]", msgType, header.getReasonCode(), target);
                     log.debug("[RMQ MESSAGE] Json --> {}", json);
@@ -63,16 +64,16 @@ public class RmqOutgoingMessage {
 
             RmqClient client = RmqManager.getInstance().getRmqClient(target);
             if (client != null) {
-                result = client.send(rmqMessage.toByteArray());
+ /*               result = client.send(rmqMessage.toByteArray());
                 // RMQ 메시지 전송 실패
                 if (!result) {
                     log.warn("() () () send failed [{}] -> [{}]", msgType, target);
-                }
+                }*/
             } else {
                 log.warn("() () () RmqClient is Null [{}]", target);
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            log.error("RmqOutgoingMessage.sendTo.Exception ", e);
         }
 
         return result;

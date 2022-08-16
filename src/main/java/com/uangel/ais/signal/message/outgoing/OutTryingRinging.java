@@ -7,7 +7,6 @@ import org.slf4j.LoggerFactory;
 import stack.java.uangel.sip.RequestEvent;
 import stack.java.uangel.sip.ServerTransaction;
 import stack.java.uangel.sip.message.Response;
-import stack.java.uangel.sip.module.SipMessageParser;
 
 /**
  * @author dajin kim
@@ -20,40 +19,40 @@ public class OutTryingRinging {
     }
 
     public Response sendTrying(RequestEvent requestEvent, ServerTransaction st) {
+        // INVITE Request 이용해 response 송신
+        OutResponse outResponse = new OutResponse();
+        return outResponse.sendResponse(requestEvent.getRequest(), Response.TRYING, null, st);
+    }
+
+    public Response sendRinging(CallInfo callInfo) {
+        if (callInfo == null) {
+            log.warn("() () () OutTryingRinging.sendRinging - CallInfo is Null");
+            // Error Response
+            return null;
+        }
+
+        ServerTransaction st = callInfo.getInviteSt();
+        if (st == null) {
+            log.warn("{}Server Transaction is null. Can't send Ringing response.", callInfo.getLogHeader());
+            // 에러 처리?
+            return null;
+        }
+
         Response response = null;
 
         try {
-            // OutResponse 이용해 response 송신
-            OutResponse outResponse = new OutResponse(requestEvent.getRequest());
-            response = outResponse.sendResponse(Response.TRYING);
+            // INVITE Request 이용해 response 송신
+            OutResponse outResponse = new OutResponse();
+            response = outResponse.createResponse(st.getRequest(), Response.RINGING, callInfo);
+
+            // Contact Header?
 
             if (response != null) {
                 st.sendResponse(response);
             }
         } catch (Exception e) {
-            log.error("OutTryingRinging.sendTrying.Exception ", e);
+            log.error("OutTryingRinging.sendRinging.Exception ", e);
         }
-
-        return response;
-    }
-
-    public Response sendRinging(CallInfo callInfo) {
-        if (callInfo == null) {
-            log.warn("() () () CallInfo is Null");
-            return null;
-        }
-
-        ServerTransaction st = callInfo.getSt();
-        if (st == null) {
-            log.warn("{}Server Transaction is null. Can't send Ringing response.", callInfo.getLogHeader());
-            return null;
-        }
-
-        Response response = null;
-
-        // OutResponse 이용해 response 송신
-        OutResponse outResponse = new OutResponse(st.getRequest());
-
 
         return response;
     }

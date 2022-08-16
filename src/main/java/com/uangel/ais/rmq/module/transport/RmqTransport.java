@@ -3,6 +3,8 @@ package com.uangel.ais.rmq.module.transport;
 import com.uangel.ais.rmq.module.RmqRecoveryListener;
 import com.rabbitmq.client.*;
 import com.rabbitmq.client.impl.DefaultExceptionHandler;
+import com.uangel.ais.service.AppInstance;
+import com.uangel.ais.util.StringUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,6 +15,7 @@ import java.io.IOException;
  */
 public class RmqTransport {
     static final Logger log = LoggerFactory.getLogger(RmqTransport.class);
+    private static final AppInstance instance = AppInstance.getInstance();
 
     private final String host;
     private final String queueName;
@@ -44,6 +47,14 @@ public class RmqTransport {
 
     protected String getQueueName() {
         return this.queueName;
+    }
+
+    private boolean isAiwf() {
+        return StringUtil.notNull(queueName) && queueName.equals(instance.getConfig().getAiwf());
+    }
+
+    private boolean isLocal() {
+        return StringUtil.notNull(queueName) && !queueName.equals(instance.getConfig().getAiwf());
     }
 
     /**
@@ -96,7 +107,11 @@ public class RmqTransport {
             @Override
             public void handleUnexpectedConnectionDriverException(Connection con, Throwable exception) {
                 log.error("handleUnexpectedConnectionDriverException Rabbit MQ {} Queue Connect Fail", queueName);
-
+                if (isLocal()) {
+                    instance.setLocalRmqConnect(false);
+                } else {
+                    instance.setAiwfRmqConnect(false);
+                }
             }
 
             @Override
@@ -114,13 +129,25 @@ public class RmqTransport {
 
         try {
             //서버가 지원하는 경우 클라이언트가 제공한 ConnectionName 이 관리 UI에 표시된다.
-            this.connection = factory.newConnection("aiif_" + this.queueName);
+            this.connection = factory.newConnection("AICall_ais" + this.queueName);
             this.connection.addBlockedListener(new BlockedListener() {
                 @Override
                 public void handleBlocked(String reason) {
+                    log.warn("handleBlocked Rabbit MQ {} Queue Blocked ({})", queueName, reason);
+                    if (isLocal()) {
+                        instance.setLocalRmqBlocked(true);
+                    } else {
+                        instance.setAiwfRmqBlocked(true);
+                    }
                 }
                 @Override
                 public void handleUnblocked() {
+                    log.warn("handleUnblocked Rabbit MQ {} Queue UnBlocked", queueName);
+                    if (isLocal()) {
+                        instance.setLocalRmqBlocked(false);
+                    } else {
+                        instance.setAiwfRmqBlocked(false);
+                    }
                 }
             });
             result = true;
@@ -147,7 +174,7 @@ public class RmqTransport {
         boolean result = false;
         try {
             this.channel = this.connection.createChannel();
-            RecoveryListener recoveryListener = new RmqRecoveryListener(queueName);
+            RecoveryListener recoveryListener = new RmqRecoveryListener(queueName, isLocal());
             ((Recoverable) this.channel).addRecoveryListener(recoveryListener);
             this.channel.queueDeclare(this.queueName, false, false, false, null);
             result = true;

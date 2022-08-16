@@ -3,9 +3,12 @@ package com.uangel.ais.session;
 import com.uangel.ais.config.AisConfig;
 import com.uangel.ais.service.AppInstance;
 import com.uangel.ais.session.model.CallInfo;
+import com.uangel.ais.session.type.CallType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -37,7 +40,8 @@ public class CallManager {
         }
 
         CallInfo callInfo = new CallInfo(callId);
-        // Set Field
+        // INBOUND 호만 고려
+        callInfo.setCallType(CallType.INBOUND);
 
         callInfoMap.put(callId, callInfo);
         log.warn("CallInfo [{}] Created", callId);
@@ -59,6 +63,12 @@ public class CallManager {
         if (callId == null) return;
         if (callInfoMap.remove(callId) != null) {
             log.warn("CallInfo [{}] Removed", callId);
+        }
+    }
+
+    public List<String> getCallIds() {
+        synchronized (callInfoMap){
+            return new ArrayList<>(callInfoMap.keySet());
         }
     }
 

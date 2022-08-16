@@ -24,6 +24,11 @@ public class AppInstance {
 
     // RMQ
     private BlockingQueue<Message> rmqMsgQueue;
+    // Rmq connect, blocking
+    private boolean localRmqConnect;
+    private boolean aiwfRmqConnect;
+    private boolean localRmqBlocked;
+    private boolean aiwfRmqBlocked;
 
     private AppInstance() {
         // nothing
@@ -36,6 +41,7 @@ public class AppInstance {
         return instance;
     }
 
+    // SIP
     public BlockingQueue<RequestEvent> getSipReqQue() {
         return sipReqQue;
     }
@@ -57,6 +63,7 @@ public class AppInstance {
         this.sipSignal = sipSignal;
     }
 
+    // Config
     public String getConfigPath() {
         return configPath;
     }
@@ -71,10 +78,39 @@ public class AppInstance {
         this.aisConfig = config;
     }
 
+    // RMQ
     public BlockingQueue<Message> getRmqMsgQueue() {
         return rmqMsgQueue;
     }
     public void setRmqMsgQueue(BlockingQueue<Message> rmqMsgQueue) {
         this.rmqMsgQueue = rmqMsgQueue;
+    }
+
+    public boolean isLocalRmqConnect() {
+        return localRmqConnect;
+    }
+    public void setLocalRmqConnect(boolean localRmqConnect) {
+        this.localRmqConnect = localRmqConnect;
+    }
+
+    public boolean isAiwfRmqConnect() {
+        return aiwfRmqConnect;
+    }
+    public void setAiwfRmqConnect(boolean aiwfRmqConnect) {
+        this.aiwfRmqConnect = aiwfRmqConnect;
+    }
+
+    public boolean isLocalRmqBlocked() {
+        return localRmqBlocked;
+    }
+    public void setLocalRmqBlocked(boolean localRmqBlocked) {
+        this.localRmqBlocked = localRmqBlocked;
+    }
+
+    public boolean isAiwfRmqBlocked() {
+        return aiwfRmqBlocked;
+    }
+    public void setAiwfRmqBlocked(boolean aiwfRmqBlocked) {
+        this.aiwfRmqBlocked = aiwfRmqBlocked;
     }
 }

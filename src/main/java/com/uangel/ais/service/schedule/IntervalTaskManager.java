@@ -1,6 +1,7 @@
 package com.uangel.ais.service.schedule;
 
 import com.uangel.ais.service.schedule.base.IntervalTaskUnit;
+import com.uangel.ais.service.schedule.handler.SessionMonitor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,7 +29,7 @@ public class IntervalTaskManager {
     }
 
     public void init(){
-
+        addJob(SessionMonitor.class.getSimpleName(), new SessionMonitor(TASK_INTERVAL));
     }
 
     public static IntervalTaskManager getInstance() {

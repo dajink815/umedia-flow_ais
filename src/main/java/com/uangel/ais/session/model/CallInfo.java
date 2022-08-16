@@ -2,6 +2,7 @@ package com.uangel.ais.session.model;
 
 import com.uangel.ais.session.state.CallState;
 import com.uangel.ais.session.state.RmqState;
+import com.uangel.ais.session.type.CallType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import stack.java.uangel.sip.ClientTransaction;
@@ -29,6 +30,9 @@ public class CallInfo {
     private CallState callState;
     private RmqState rmqState;
 
+    // Type
+    private CallType callType;
+
     // SIP 정보
     private String toMdn;
     private String fromMdn;
@@ -45,8 +49,7 @@ public class CallInfo {
 
     private ConcurrentMap<String, List<String>> requestHeader;
     private ConcurrentMap<String, List<String>> responseHeader;
-    private ServerTransaction st;
-    private ClientTransaction ct;
+    private ServerTransaction inviteSt;
     private ClientTransaction cancelCt;
     private Dialog dialog;
     private List<ViaHeader> viaHeader = new ArrayList<>();
@@ -66,19 +69,13 @@ public class CallInfo {
         this.rmqState = RmqState.NEW;
     }
 
-    public void setLogHeader() {
-        this.logHeader = "() ("+ this.callId + ") () ";
-    }
-
     // lock methods
     public void lock(){
         this.lock.lock();
     }
-
     public void unlock(){
         this.lock.unlock();
     }
-
     public void handleLock(Runnable r){
         try{
             this.lock.lock();
@@ -94,8 +91,12 @@ public class CallInfo {
     public long getCreateTime() {
         return createTime;
     }
+
     public String getLogHeader() {
         return logHeader;
+    }
+    private void setLogHeader() {
+        this.logHeader = "() ("+ this.callId + ") () ";
     }
 
     public long getLastRmqTime() {
@@ -123,6 +124,18 @@ public class CallInfo {
         if (this.rmqState == null || !this.rmqState.equals(rmqState)) {
             log.info("{}RMQ Status Changed [{}] --> [{}]", logHeader, this.rmqState, rmqState);
             this.rmqState = rmqState;
+        }
+    }
+
+    // Type
+    public CallType getCallType() {
+        return callType;
+    }
+    public void setCallType(CallType callType) {
+        if (this.callType == null) {
+            this.callType = callType;
+        } else {
+            log.warn("{}Cannot Change CallType", logHeader);
         }
     }
 
@@ -225,18 +238,13 @@ public class CallInfo {
         this.responseHeader = responseHeader;
     }
 
-    public ServerTransaction getSt() {
-        return st;
-    }
-    public void setSt(ServerTransaction st) {
-        this.st = st;
+    public ServerTransaction getInviteSt() {
+        return inviteSt;
     }
 
-    public ClientTransaction getCt() {
-        return ct;
-    }
-    public void setCt(ClientTransaction ct) {
-        this.ct = ct;
+    // todo
+    public void setInviteSt(ServerTransaction inviteSt) {
+        this.inviteSt = inviteSt;
     }
 
     public ClientTransaction getCancelCt() {

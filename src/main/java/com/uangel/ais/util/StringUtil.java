@@ -16,6 +16,7 @@ import com.google.common.net.InetAddresses;
 public class StringUtil {
     private static final String STR_OK = "OK";
     private static final String STR_FAIL = "FAIL";
+    private static final String STR_SUCCESS = "SUCCESS";
     private static final String TRUE = "TRUE";
     private static final String TEL = "TEL";
     private static final String ON = "ON";
@@ -27,6 +28,10 @@ public class StringUtil {
 
     public static String getOkFail(boolean result) {
         return (result ? STR_OK : STR_FAIL);
+    }
+
+    public static String getSucFail(boolean result) {
+        return (result ?  STR_SUCCESS : STR_FAIL);
     }
 
     public static boolean checkTrue(String str) {
@@ -59,6 +64,10 @@ public class StringUtil {
 
     public static boolean isNull(String str) {
         return str == null || str.isEmpty();
+    }
+
+    public static boolean notNull(String str) {
+        return str != null && !str.isEmpty();
     }
 
     public static boolean isNumeric(String strNum) {

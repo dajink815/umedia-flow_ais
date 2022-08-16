@@ -3,6 +3,7 @@ package com.uangel.ais.rmq;
 import com.uangel.ais.config.AisConfig;
 import com.uangel.ais.service.AppInstance;
 import com.uangel.ais.rmq.handler.RmqConsumer;
+import com.uangel.ais.util.StringUtil;
 import com.uangel.protobuf.Message;
 import com.uangel.ais.rmq.module.RmqClient;
 import com.uangel.ais.rmq.module.RmqServer;
@@ -69,32 +70,39 @@ public class RmqManager {
     private void startRmqServer() {
         // AIS Server
         if (rmqServer == null) {
-            RmqServer rmqAisServer = new RmqServer(config.getHost(), config.getUser(), config.getPass(), config.getAis(), config.getPort());
-            if (rmqAisServer.start()) {
-                log.debug("RabbitMQ Server Start Success. [{}], [{}], [{}]", config.getAis(), config.getHost(), config.getUser());
-                rmqServer = rmqAisServer;
-            }
+            String target = config.getAis();
+            String host = config.getHost();
+            String user = config.getUser();
+            String pass = config.getPass();
+            int port = config.getPort();
+
+            RmqServer rmqAisServer = new RmqServer(host, user, pass, target, port);
+            boolean localResult = rmqAisServer.start();
+            if (localResult) rmqServer = rmqAisServer;
+            instance.setLocalRmqConnect(localResult);
+            log.info("RabbitMQ Server Start {}. [{}], [{}], [{}]", StringUtil.getSucFail(localResult), target, host, user);
         }
     }
 
     // Client
     private void startRmqClient() {
         // AIWF
-        addClient(config.getAiwf(), config.getAiwfHost(), config.getAiwfUser(), config.getAiwfPass(), config.getAiwfPort());
-
+        boolean aiwfResult = addClient(config.getAiwf(), config.getAiwfHost(), config.getAiwfUser(), config.getAiwfPass(), config.getAiwfPort());
+        instance.setAiwfRmqConnect(aiwfResult);
         // AIM
-        addClient(config.getAim(), config.getHost(), config.getUser(), config.getPass(), config.getPort());
+        boolean localResult = addClient(config.getAim(), config.getHost(), config.getUser(), config.getPass(), config.getPort());
+        instance.setLocalRmqConnect(localResult);
+
     }
-    private void addClient(String target, String host, String user, String pass, int port) {
+    private boolean addClient(String target, String host, String user, String pass, int port) {
+        boolean result = false;
         if (rmqClientMap.get(target) == null) {
             RmqClient client = new RmqClient(host, user, pass, target, port);
-            if (client.start()) {
-                log.debug("RabbitMQ Client Start Success. [{}], [{}], [{}]", target, host, user);
-                rmqClientMap.put(target, client);
-            } else {
-                log.debug("RabbitMQ Client Start Fail. [{}], [{}], [{}]", target, host, user);
-            }
+            result = client.start();
+            if (result) rmqClientMap.put(target, client);
+            log.info("RabbitMQ Client Start {}. [{}], [{}], [{}]", StringUtil.getSucFail(result), target, host, user);
         }
+        return result;
     }
 
     public RmqClient getRmqClient(String queueName) {
