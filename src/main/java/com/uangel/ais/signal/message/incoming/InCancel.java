@@ -43,7 +43,7 @@ public class InCancel {
             log.info("Outgoing CancelOk Response [\r\n{}]", cancelOk);
             st.terminate();
         } catch (Exception e) {
-            log.error("InCancel.receive.Exception(SendCancelOk) ", e);
+            log.error("InCancel.receive.Exception(Terminate CancelST) ", e);
         }
 
         // Send 487 Response

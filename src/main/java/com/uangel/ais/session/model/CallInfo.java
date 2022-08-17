@@ -105,6 +105,9 @@ public class CallInfo {
     public void setLastRmqTime(long lastRmqTime) {
         this.lastRmqTime = lastRmqTime;
     }
+    public void updateLastRmqTime() {
+        this.lastRmqTime = System.currentTimeMillis();
+    }
 
     // State
     public CallState getCallState() {

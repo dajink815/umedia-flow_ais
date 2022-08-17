@@ -1,5 +1,6 @@
 package com.uangel.ais.signal.message.outgoing;
 
+import com.uangel.ais.session.model.CallInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import stack.java.uangel.sip.message.Response;
@@ -14,7 +15,7 @@ public class OutError {
         // nothing
     }
 
-    public Response send() {
+    public Response send(CallInfo callInfo) {
         Response response = null;
 
         return response;

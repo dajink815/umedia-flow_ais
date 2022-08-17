@@ -77,4 +77,31 @@ public class SipRequestModule extends IncomingCheck {
         inBye.receive(requestEvent, st);
     }
 
+    protected void inOptions(RequestEvent requestEvent) {
+        ServerTransaction st = setServerTransaction(requestEvent);
+        if (st == null) {
+            log.error(TRANSACTION_NULL);
+            return;
+        }
+
+        Request request = requestEvent.getRequest();
+        //log.info("Incoming Options Request [\r\n{}]", request);
+
+
+    }
+
+
+    protected void inUpdate(RequestEvent requestEvent) {
+        ServerTransaction st = setServerTransaction(requestEvent);
+        if (st == null) {
+            log.error(TRANSACTION_NULL);
+            return;
+        }
+
+        Request request = requestEvent.getRequest();
+        log.info("Incoming Update Request [\r\n{}]", request);
+
+
+    }
+
 }

@@ -16,12 +16,12 @@ import stack.java.uangel.sip.module.SipMessageParser;
 /**
  * @author dajin kim
  */
-public class CreateSipMsg {
-    static final Logger log = LoggerFactory.getLogger(CreateSipMsg.class);
+public class SipCreateMsg {
+    static final Logger log = LoggerFactory.getLogger(SipCreateMsg.class);
     private static final CallManager callManager = CallManager.getInstance();
     private final SipSignal sipSignal = AppInstance.getInstance().getSipSignal();
 
-    public CreateSipMsg() {
+    public SipCreateMsg() {
         // nothing
     }
 

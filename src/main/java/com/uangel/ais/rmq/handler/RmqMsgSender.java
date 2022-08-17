@@ -4,6 +4,7 @@ import com.uangel.ais.rmq.common.RmqMsgType;
 import com.uangel.ais.rmq.handler.aim.outgoing.*;
 import com.uangel.ais.rmq.handler.aiwf.outgoing.*;
 import com.uangel.ais.session.model.CallInfo;
+import com.uangel.ais.session.state.RmqState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,11 +37,17 @@ public class RmqMsgSender {
     }
 
     public void sendOffer(CallInfo callInfo) {
+        callInfo.setRmqState(RmqState.OFFER_REQ);
+        callInfo.updateLastRmqTime();
+
         RmqOfferReq req = new RmqOfferReq();
         req.send(callInfo, RmqMsgType.OFFER_REQ);
     }
 
     public void sendNego(CallInfo callInfo) {
+        callInfo.setRmqState(RmqState.NEGO_REQ);
+        callInfo.updateLastRmqTime();
+
         RmqNegoReq req = new RmqNegoReq();
         req.send(callInfo, RmqMsgType.NEGO_REQ);
     }
@@ -59,11 +66,17 @@ public class RmqMsgSender {
     }
 
     public void sendCallIncoming(CallInfo callInfo) {
+        callInfo.setRmqState(RmqState.INCOMING);
+        callInfo.updateLastRmqTime();
+
         RmqCallIncomingReq req = new RmqCallIncomingReq();
         req.send(callInfo, RmqMsgType.CALL_INCOMING_REQ);
     }
 
     public void sendCallStart(CallInfo callInfo) {
+        callInfo.setRmqState(RmqState.START);
+        callInfo.updateLastRmqTime();
+
         RmqCallStartReq req = new RmqCallStartReq();
         req.send(callInfo, RmqMsgType.CALL_START_REQ);
     }

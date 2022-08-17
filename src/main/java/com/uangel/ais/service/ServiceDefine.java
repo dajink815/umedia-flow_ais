@@ -5,7 +5,7 @@ package com.uangel.ais.service;
  */
 public enum ServiceDefine {
 
-    TRANSPORT("udp");
+    TRANSPORT("udp"), MAX_FORWARDS(70);
 
     private String str;
     private int num;

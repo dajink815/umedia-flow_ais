@@ -69,8 +69,14 @@ public class SipRequestConsumer extends SipRequestModule implements Runnable {
             case Request.BYE:
                 inBye(requestEvent);
                 break;
+            case Request.OPTIONS:
+                inOptions(requestEvent);
+                break;
+            case Request.UPDATE:
+                inUpdate(requestEvent);
+                break;
             default:
-                log.debug("Receive Other Message [{}]", method);
+                log.warn("Receive Other Message [{}]", method);
                 break;
         }
     }

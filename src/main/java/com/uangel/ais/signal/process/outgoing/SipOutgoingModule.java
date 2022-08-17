@@ -3,7 +3,7 @@ package com.uangel.ais.signal.process.outgoing;
 import com.uangel.ais.session.model.CallInfo;
 import com.uangel.ais.signal.message.outgoing.OutBye;
 import com.uangel.ais.signal.message.outgoing.OutError;
-import com.uangel.ais.signal.message.outgoing.OutOk;
+import com.uangel.ais.signal.message.outgoing.OutInviteOk;
 import com.uangel.ais.signal.message.outgoing.OutTryingRinging;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,15 +45,15 @@ public class SipOutgoingModule {
         log.info("Outgoing Ringing Response [\r\n{}]", response);
     }
 
-    public void outOk() {
-        OutOk outOk = new OutOk();
-        Response response = outOk.send();
+    public void outOk(CallInfo callInfo) {
+        OutInviteOk outInviteOk = new OutInviteOk();
+        Response response = outInviteOk.send(callInfo);
         log.info("Outgoing InviteOk Response [\r\n{}]", response);
     }
 
-    public void outError() {
+    public void outError(CallInfo callInfo) {
         OutError outError = new OutError();
-        Response response = outError.send();
+        Response response = outError.send(callInfo);
         log.info("Outgoing Error Response [\r\n{}]", response);
     }
 }

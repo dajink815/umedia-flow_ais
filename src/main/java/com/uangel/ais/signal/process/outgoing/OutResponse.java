@@ -10,7 +10,7 @@ import stack.java.uangel.sip.message.Response;
 /**
  * @author dajin kim
  */
-public class OutResponse extends CreateSipMsg {
+public class OutResponse extends SipCreateMsg {
     static final Logger log = LoggerFactory.getLogger(OutResponse.class);
 
     public OutResponse() {

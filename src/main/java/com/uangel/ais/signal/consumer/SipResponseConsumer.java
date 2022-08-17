@@ -60,13 +60,15 @@ public class SipResponseConsumer extends SipResponseModule implements Runnable {
         String method = ((CSeqHeader) response.getHeader(CSeqHeader.NAME)).getMethod();
         int code = response.getStatusCode();
 
+        // Options Update(Refresher uas) OK ?
+
         // Inbound 만 고려
         if (code == Response.OK) {
-            // Bye 200ok
             inOk(responseEvent, method);
         } else if (code >= Response.BAD_REQUEST) {
-            // Bye Error
             inError(responseEvent, method);
+        } else {
+            log.warn("SipResponseConsumer - Receive Other Message [{} {}]", method, code);
         }
     }
 }

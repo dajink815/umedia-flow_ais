@@ -122,8 +122,7 @@ public class InInvite extends SipMessageParser {
         callInfo.setDialog(dialog);
 
         // Send CallIncomingReq
-        RmqMsgSender sender = RmqMsgSender.getInstance();
-        sender.sendCallIncoming(callInfo);
+        RmqMsgSender.getInstance().sendCallIncoming(callInfo);
     }
 
     private void terminateCall(CallInfo callInfo, int errCode) {
