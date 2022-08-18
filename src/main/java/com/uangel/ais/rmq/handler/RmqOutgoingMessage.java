@@ -64,11 +64,11 @@ public class RmqOutgoingMessage {
 
             RmqClient client = RmqManager.getInstance().getRmqClient(target);
             if (client != null) {
- /*               result = client.send(rmqMessage.toByteArray());
+                result = client.send(rmqMessage.toByteArray());
                 // RMQ 메시지 전송 실패
                 if (!result) {
                     log.warn("() () () send failed [{}] -> [{}]", msgType, target);
-                }*/
+                }
             } else {
                 log.warn("() () () RmqClient is Null [{}]", target);
             }

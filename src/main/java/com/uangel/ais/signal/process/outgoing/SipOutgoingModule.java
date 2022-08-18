@@ -9,6 +9,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import stack.java.uangel.sip.RequestEvent;
 import stack.java.uangel.sip.ServerTransaction;
+import stack.java.uangel.sip.message.Request;
 import stack.java.uangel.sip.message.Response;
 
 /**
@@ -28,9 +29,10 @@ public class SipOutgoingModule {
         return outgoing;
     }
 
-    public void outBye() {
+    public void outBye(CallInfo callInfo) {
         OutBye outBye = new OutBye();
-        outBye.send();
+        Request request = outBye.send(callInfo);
+        log.info("Outgoing Bye Request [\r\n{}]", request);
     }
 
     public void outTrying(RequestEvent requestEvent, ServerTransaction st) {

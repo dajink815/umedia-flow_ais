@@ -8,6 +8,8 @@ import com.uangel.ais.session.state.RmqState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.EnumSet;
+
 /**
  * @author dajin kim
  */
@@ -25,6 +27,12 @@ public class RmqMsgSender {
         return sender;
     }
 
+    private static final EnumSet<RmqState> notSendHangup = EnumSet.of(
+            RmqState.NEW,
+            RmqState.INCOMING,
+            RmqState.STOP,
+            RmqState.IDLE
+    );
     // AIM
     public void sendMLoginRes(String tId) {
         RmqMLoginRes res = new RmqMLoginRes();
@@ -53,6 +61,11 @@ public class RmqMsgSender {
     }
 
     public void sendHangup(CallInfo callInfo) {
+        if (notSendHangup.contains(callInfo.getRmqState())) {
+
+            return;
+        }
+
         RmqHangupReq req = new RmqHangupReq();
         req.send(callInfo, RmqMsgType.HANGUP_REQ);
     }
@@ -74,6 +87,7 @@ public class RmqMsgSender {
     }
 
     public void sendCallStart(CallInfo callInfo) {
+        // todo 호 종료중이면 Start 송신하지 않음
         callInfo.setRmqState(RmqState.START);
         callInfo.updateLastRmqTime();
 
@@ -90,11 +104,17 @@ public class RmqMsgSender {
 
     // CallStop 종료 사유 전달? reasonCode 로? bodyField 추가?
     public void sendCallStop(CallInfo callInfo) {
+        callInfo.setRmqState(RmqState.STOP);
+        callInfo.updateLastRmqTime();
+
         RmqCallStopReq req = new RmqCallStopReq();
         req.send(callInfo, RmqMsgType.CALL_STOP_REQ);
     }
 
     public void sendCallStop(CallInfo callInfo, int reasonCode, String reason) {
+        callInfo.setRmqState(RmqState.STOP);
+        callInfo.updateLastRmqTime();
+
         RmqCallStopReq req = new RmqCallStopReq();
         req.send(callInfo, RmqMsgType.CALL_STOP_REQ, reasonCode, reason);
     }

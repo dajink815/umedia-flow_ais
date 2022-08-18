@@ -14,7 +14,6 @@ public class RmqAimConsumer {
     static final Logger log = LoggerFactory.getLogger(RmqAimConsumer.class);
 
     public void aimMessageProcessing(Message msg) {
-        log.debug("RmqAimConsumer [{}]", msg.getHeader().getType());
 
         switch(msg.getBodyCase().getNumber()){
             case Message.MLOGINREQ_FIELD_NUMBER:

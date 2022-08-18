@@ -1,6 +1,7 @@
 package com.uangel.ais.signal.message.outgoing;
 
 import com.uangel.ais.session.model.CallInfo;
+import com.uangel.ais.session.state.CallState;
 import com.uangel.ais.signal.process.outgoing.OutResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,6 +42,10 @@ public class OutTryingRinging {
         Response response = null;
 
         try {
+            // todo Lock 필요?
+            callInfo.lock();
+            callInfo.setCallState(CallState.RINGING);
+
             // INVITE Request 이용해 response 송신
             OutResponse outResponse = new OutResponse();
             response = outResponse.createResponse(st.getRequest(), Response.RINGING, callInfo);
@@ -52,6 +57,8 @@ public class OutTryingRinging {
             }
         } catch (Exception e) {
             log.error("OutTryingRinging.sendRinging.Exception ", e);
+        } finally {
+            callInfo.unlock();
         }
 
         return response;

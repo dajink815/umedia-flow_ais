@@ -1,5 +1,6 @@
 package com.uangel.ais.signal.message.incoming;
 
+import com.uangel.ais.rmq.handler.RmqMsgSender;
 import com.uangel.ais.session.CallManager;
 import com.uangel.ais.session.model.CallInfo;
 import com.uangel.ais.signal.process.outgoing.OutResponse;
@@ -58,6 +59,9 @@ public class InCancel {
 
 
         // hangup, CallStop
+        RmqMsgSender sender = RmqMsgSender.getInstance();
+        sender.sendHangup(callInfo);
+        sender.sendCallStop(callInfo);
 
     }
 }

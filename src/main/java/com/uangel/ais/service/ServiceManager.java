@@ -1,6 +1,8 @@
 package com.uangel.ais.service;
 
 import com.uangel.ais.config.AisConfig;
+import com.uangel.ais.service.aim.AimManager;
+import com.uangel.ais.service.aiwf.AiwfManager;
 import com.uangel.ais.service.schedule.IntervalTaskManager;
 import com.uangel.ais.signal.SipManager;
 import com.uangel.ais.util.SleepUtil;
@@ -54,10 +56,15 @@ public class ServiceManager {
     private void startService() {
         log.info("Start Service...");
 
+        // SIP , RMQ
         sipManager = SipManager.getInstance();
 
         rmqManager = RmqManager.getInstance();
         rmqManager.start();
+
+        // AIM , AIWF
+        AimManager.getInstance().createAimSession(0);
+        AiwfManager.getInstance().createAwifSession(0);
 
         this.intervalTaskManager = IntervalTaskManager.getInstance();
         try {

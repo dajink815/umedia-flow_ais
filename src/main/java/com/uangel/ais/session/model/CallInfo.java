@@ -46,11 +46,12 @@ public class CallInfo {
     private String fromAddress;
     private long cSeq;
     private String sdp;
+    private String contact;
 
     private ConcurrentMap<String, List<String>> requestHeader;
     private ConcurrentMap<String, List<String>> responseHeader;
-    private ServerTransaction inviteSt;
-    private ClientTransaction cancelCt;
+    private ServerTransaction inviteSt; // InInvite
+    private ClientTransaction byeCt;    // OutBye
     private Dialog dialog;
     private List<ViaHeader> viaHeader = new ArrayList<>();
     // sip message
@@ -213,10 +214,10 @@ public class CallInfo {
         this.fromAddress = fromAddress;
     }
 
-    public long getcSeq() {
+    public long getCSeq() {
         return cSeq;
     }
-    public void setcSeq(long cSeq) {
+    public void setCSeq(long cSeq) {
         this.cSeq = cSeq;
     }
 
@@ -226,6 +227,14 @@ public class CallInfo {
     public void setSdp(String sdp) {
         this.sdp = sdp;
     }
+
+    public String getContact() {
+        return contact;
+    }
+    public void setContact(String contact) {
+        this.contact = contact;
+    }
+
 
     public ConcurrentMap<String, List<String>> getRequestHeader() {
         return requestHeader;
@@ -244,17 +253,31 @@ public class CallInfo {
     public ServerTransaction getInviteSt() {
         return inviteSt;
     }
-
-    // todo
     public void setInviteSt(ServerTransaction inviteSt) {
+        if (this.inviteSt != null && this.inviteSt != inviteSt) {
+            try {
+                log.info("{}Terminate INVITE server transaction", this.logHeader);
+                this.inviteSt.terminate();
+            } catch (Exception e) {
+                log.error("CallInfo.setInviteSt.Exception", e);
+            }
+        }
         this.inviteSt = inviteSt;
     }
 
-    public ClientTransaction getCancelCt() {
-        return cancelCt;
+    public ClientTransaction getByeCt() {
+        return byeCt;
     }
-    public void setCancelCt(ClientTransaction cancelCt) {
-        this.cancelCt = cancelCt;
+    public void setByeCt(ClientTransaction byeCt) {
+        if (this.byeCt != null && this.byeCt != byeCt) {
+            try {
+                log.info("{}Terminate BYE client transaction", this.logHeader);
+                this.byeCt.terminate();
+            } catch (Exception e) {
+                log.error("CallInfo.setByeCt.Exception", e);
+            }
+        }
+        this.byeCt = byeCt;
     }
 
     public Dialog getDialog() {

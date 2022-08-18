@@ -9,6 +9,7 @@ import com.uangel.ais.rmq.module.transport.RmqReceiver;
 import com.uangel.ais.service.AppInstance;
 import com.uangel.ais.util.DateFormatUtil;
 import com.uangel.ais.util.PasswdDecryptor;
+import com.uangel.ais.util.StringUtil;
 import com.uangel.ais.util.Suppress;
 import com.google.protobuf.util.JsonFormat;
 import com.uangel.protobuf.Header;
@@ -115,6 +116,16 @@ public class RmqServer {
                 printMsg(prettyMsg, ts);
             }
 
+            // Check Body Type
+            String bodyCase = rmqMsg.getBodyCase().toString();
+            String typeCheck = StringUtil.removeUnderBar(msgType);
+            if (!bodyCase.equalsIgnoreCase(typeCheck)) {
+                log.warn("MessageCallback.onReceived Check Body type [{}]", bodyCase);
+            } else {
+                log.debug("MessageCallback.onReceived Body type [{}]", bodyCase);
+            }
+
+            // Put Queue
             try {
                 queue.put(rmqMsg);
             } catch (InterruptedException e) {

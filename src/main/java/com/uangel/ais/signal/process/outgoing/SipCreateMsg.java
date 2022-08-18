@@ -5,18 +5,26 @@ import com.uangel.ais.session.CallManager;
 import com.uangel.ais.session.model.CallInfo;
 import com.uangel.ais.session.state.CallState;
 import com.uangel.ais.signal.module.SipSignal;
+import com.uangel.ais.util.StringUtil;
 import lib.java.handler.sip.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import stack.java.uangel.sip.InvalidArgumentException;
+import stack.java.uangel.sip.address.URI;
+import stack.java.uangel.sip.header.CSeqHeader;
+import stack.java.uangel.sip.header.CallIdHeader;
+import stack.java.uangel.sip.header.FromHeader;
 import stack.java.uangel.sip.header.ToHeader;
 import stack.java.uangel.sip.message.Request;
 import stack.java.uangel.sip.message.Response;
 import stack.java.uangel.sip.module.SipMessageParser;
 
+import java.text.ParseException;
+
 /**
  * @author dajin kim
  */
-public class SipCreateMsg {
+public class SipCreateMsg extends SipCreateHeader {
     static final Logger log = LoggerFactory.getLogger(SipCreateMsg.class);
     private static final CallManager callManager = CallManager.getInstance();
     private final SipSignal sipSignal = AppInstance.getInstance().getSipSignal();
@@ -64,14 +72,38 @@ public class SipCreateMsg {
         return response;
     }
 
-    // Create Response with CallInfo
+    // todo Create Response with CallInfo
 
 
-    public Request createRequest() {
-        Request request = null;
+    // Create Request with CallInfo
+    public Request createRequest(CallInfo callInfo, String method) throws ParseException, InvalidArgumentException {
+        Request request;
+        URI reqURI;
+        ToHeader toHeader;
+        FromHeader fromHeader;
 
+        // Inbound 만 고려
+        if (StringUtil.isNull(callInfo.getContact())) {
+            reqURI = createURIbyAddress(callInfo.getFromAddress());
+        } else {
+            reqURI = createSipURI(callInfo.getContact());
+        }
 
+        fromHeader = createFromHeader(callInfo.getToAddress(), callInfo.getToTag());
+        toHeader = createToHeader(callInfo.getFromAddress(), callInfo.getFromTag());
 
+        CallIdHeader callIdHeader = createCallIdHeader(callInfo.getCallId());
+        long cSeq = callInfo.getCSeq() + 1;
+        CSeqHeader cSeqHeader = createCSeqHeader(method, cSeq);
+        callInfo.setCSeq(cSeq);
+
+        // Create Request
+        request = sipSignal.getMessageFactory().createRequest(reqURI, method, callIdHeader, cSeqHeader, fromHeader, toHeader, createVia(), createMaxForwardsHeader());
+
+        // Route Headers?
+
+        // Contact
+        request.addHeader(createContactHeader());
         return request;
     }
 

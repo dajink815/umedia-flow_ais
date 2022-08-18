@@ -4,6 +4,7 @@ import com.uangel.ais.config.AisConfig;
 import com.uangel.ais.service.AppInstance;
 import com.uangel.ais.session.model.CallInfo;
 import com.uangel.ais.session.type.CallType;
+import com.uangel.ais.signal.util.TerminateTransaction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -61,7 +62,9 @@ public class CallManager {
     // Transaction 정리
     public void deleteCallInfo(String callId) {
         if (callId == null) return;
-        if (callInfoMap.remove(callId) != null) {
+        CallInfo deleteCall = callInfoMap.remove(callId);
+        if (deleteCall != null) {
+            TerminateTransaction.sipTransactionTerminate(deleteCall);
             log.warn("CallInfo [{}] Removed", callId);
         }
     }

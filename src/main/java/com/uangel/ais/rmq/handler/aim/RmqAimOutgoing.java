@@ -9,6 +9,6 @@ import com.uangel.ais.service.AppInstance;
 public class RmqAimOutgoing extends RmqOutgoingMessage {
 
     public RmqAimOutgoing() {
-        super(AppInstance.getInstance().getConfig().getAiwf());
+        super(AppInstance.getInstance().getConfig().getAim());
     }
 }

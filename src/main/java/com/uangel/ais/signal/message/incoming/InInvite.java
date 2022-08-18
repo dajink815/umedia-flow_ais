@@ -6,10 +6,12 @@ import com.uangel.ais.session.CallManager;
 import com.uangel.ais.session.model.CallInfo;
 import com.uangel.ais.session.state.CallState;
 import com.uangel.ais.signal.process.outgoing.SipOutgoingModule;
+import com.uangel.ais.signal.util.SipHeaderParser;
 import lib.java.handler.sip.Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import stack.java.uangel.sip.*;
+import stack.java.uangel.sip.header.CSeqHeader;
 import stack.java.uangel.sip.header.FromHeader;
 import stack.java.uangel.sip.header.ToHeader;
 import stack.java.uangel.sip.header.ViaHeader;
@@ -102,6 +104,10 @@ public class InInvite extends SipMessageParser {
         callInfo.setToTag(toTag);
         callInfo.setCallState(CallState.TRYING);
 
+        callInfo.setCSeq(((CSeqHeader) request.getHeader(CSeqHeader.NAME)).getSeqNumber());
+
+        // Request HashMap
+
         // Parse SDP
         String sdp = null;
         try {
@@ -110,6 +116,10 @@ public class InInvite extends SipMessageParser {
             log.warn("InInvite.receive.getSdp.Exception (callId: {})", callId);
         }
         callInfo.setSdp(sdp);
+
+        // INVITE Contact = target URI
+        String contactStr = SipHeaderParser.getTargetUri(request);
+        callInfo.setContact(contactStr);
 
         // Dialog Transaction
         Dialog dialog;

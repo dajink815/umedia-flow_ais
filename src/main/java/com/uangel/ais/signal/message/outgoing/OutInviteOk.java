@@ -50,8 +50,7 @@ public class OutInviteOk {
 
             // ??
             // Contact, Max-Forwards, Allow
-            ContactHeader contactHeader = sipCreateHeader.createContactHeader();
-            response.addHeader(contactHeader);
+            response.addHeader(sipCreateHeader.createContactHeader());
             response.addHeader(sipCreateHeader.createMaxForwardsHeader());
             response.addHeader(sipCreateHeader.createAllowHeader());
 

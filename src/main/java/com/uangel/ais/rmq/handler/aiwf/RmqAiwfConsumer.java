@@ -14,7 +14,6 @@ public class RmqAiwfConsumer {
     static final Logger log = LoggerFactory.getLogger(RmqAiwfConsumer.class);
 
     public void aiwfMessageProcessing(Message msg) {
-        log.debug("RmqAiwfConsumer [{}]", msg.getHeader().getType());
 
         switch(msg.getBodyCase().getNumber()){
             case Message.WHBREQ_FIELD_NUMBER:

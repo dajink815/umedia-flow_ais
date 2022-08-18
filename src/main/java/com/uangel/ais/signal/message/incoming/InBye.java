@@ -1,5 +1,6 @@
 package com.uangel.ais.signal.message.incoming;
 
+import com.uangel.ais.rmq.handler.RmqMsgSender;
 import com.uangel.ais.session.CallManager;
 import com.uangel.ais.session.model.CallInfo;
 import com.uangel.ais.session.state.CallState;
@@ -56,8 +57,9 @@ public class InBye {
             callInfo.unlock();
         }
 
-        // hangup
-        // CallStop
-
+        // hangup, CallStop
+        RmqMsgSender sender = RmqMsgSender.getInstance();
+        sender.sendHangup(callInfo);
+        sender.sendCallStop(callInfo);
     }
 }

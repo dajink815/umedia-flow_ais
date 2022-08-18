@@ -1,6 +1,5 @@
 package com.uangel.ais.service.aiwf;
 
-import com.uangel.ais.config.AisConfig;
 import com.uangel.ais.service.AppInstance;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -74,8 +73,8 @@ public class AiwfManager {
         // Standby -> Active 절체시 필드값 리셋? (lastHbTime 현재 시간으로)
 
         if (checkHbTimeout(sessionInfo) && !sessionInfo.isTimeoutFlag()) {
-            log.error("[TIMEOUT] AIWF Heartbeat Timeout");
             sessionInfo.setTimeoutFlag(true);
+            log.error("[TIMEOUT] AIWF Heartbeat Timeout ({})", sessionInfo.isTimeoutFlag());
         }
     }
 
