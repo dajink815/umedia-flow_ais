@@ -99,10 +99,14 @@ public class RmqMsgSender {
         RmqCallCloseRes res = new RmqCallCloseRes();
         res.send(tId, callInfo, RmqMsgType.CALL_CLOSE_RES);
     }
+    public void sendCallCloseRes(String tId, int reasonCode, String reason, String callId) {
+        RmqCallCloseRes res = new RmqCallCloseRes();
+        res.send(tId, reasonCode, reason, callId, RmqMsgType.CALL_CLOSE_RES);
+    }
 
     // CallCloseRes Fail?
 
-    // CallStop 종료 사유 전달? reasonCode 로? bodyField 추가?
+    // todo CallStop 종료 사유 전달? reasonCode 로? bodyField 추가?
     public void sendCallStop(CallInfo callInfo) {
         callInfo.setRmqState(RmqState.STOP);
         callInfo.updateLastRmqTime();

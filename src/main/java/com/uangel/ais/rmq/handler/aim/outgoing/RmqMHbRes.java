@@ -4,6 +4,7 @@ import com.uangel.ais.rmq.common.RmqBuilder;
 import com.uangel.ais.rmq.handler.aim.RmqAimOutgoing;
 import com.uangel.protobuf.Header;
 import com.uangel.protobuf.Message;
+import com.uangel.protobuf.MessageBuilder;
 
 /**
  * @author dajin kim

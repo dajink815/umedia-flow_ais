@@ -28,7 +28,7 @@ public class OutResponse extends SipCreateMsg {
                 st.sendResponse(response);
             }
         } catch (Exception e) {
-            log.error("OutResponse.sendResponse (byRequest)", e);
+            log.error("OutResponse.sendResponse.Exception (byRequest)", e);
         }
 
         return response;
@@ -36,24 +36,21 @@ public class OutResponse extends SipCreateMsg {
 
 
     // Send Response with CallInfo
-    public Response sendResponse(CallInfo callInfo, int statusCode, String method) {
-        Response response = null;
+    public Response sendResponse(CallInfo callInfo, int code, String method) {
+        Response response = createResponse(callInfo, code, method);
 
         try {
-/*            CreateSipMsg createSipMsg = new CreateSipMsg();
-            response = createSipMsg.createResponse(callInfo, statusCode, method);*/
-
-/*            ServerTransaction callInfoSt = callInfo.getSt();
+            // INVITE 외의 method?
+            ServerTransaction callInfoSt = callInfo.getInviteSt();
             if (callInfoSt == null)
-                return null;*/
+                return null;
 
-/*            if (response != null) {
+            if (response != null) {
                 callInfoSt.sendResponse(response);
-            }*/
+            }
         } catch (Exception e) {
-            log.error("OutResponse.sendResponse (byCallInfo) ", e);
+            log.error("OutResponse.sendResponse.Exception (byCallInfo) ", e);
         }
-
         return response;
     }
 

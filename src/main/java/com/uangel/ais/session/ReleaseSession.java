@@ -1,26 +1,22 @@
 package com.uangel.ais.session;
 
+import com.uangel.ais.rmq.handler.RmqMsgSender;
 import com.uangel.ais.session.model.CallInfo;
 import com.uangel.ais.session.state.CallState;
 import com.uangel.ais.session.type.CallType;
+import com.uangel.ais.signal.process.outgoing.SipOutgoingModule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import stack.java.uangel.sip.message.Request;
 
 /**
  * @author dajin kim
  */
 public class ReleaseSession {
     static final Logger log = LoggerFactory.getLogger(ReleaseSession.class);
-    private static ReleaseSession releaseSession = null;
 
-    private ReleaseSession() {
+    public ReleaseSession() {
         // nothing
-    }
-
-    public static ReleaseSession getInstance() {
-        if (releaseSession == null)
-            releaseSession = new ReleaseSession();
-        return releaseSession;
     }
 
     public void release(CallInfo callInfo, int releaseCode) {
@@ -43,16 +39,25 @@ public class ReleaseSession {
                 return;
             }
 
+            SipOutgoingModule sipOutgoing = SipOutgoingModule.getInstance();
+            RmqMsgSender rmqSender = RmqMsgSender.getInstance();
+
             if (callState.equals(CallState.CONNECT)) {
                 // BYE
-
+                sipOutgoing.outBye(callInfo);
+                rmqSender.sendHangup(callInfo);
+                rmqSender.sendCallStop(callInfo);
             } else {
+                // INBOUND 만 고려
 
+                // Error Response 로 정리 맞는지 상태 확인
 
+                sipOutgoing.outError(callInfo, releaseCode, Request.INVITE);
+                rmqSender.sendHangup(callInfo);
+                rmqSender.sendCallStop(callInfo);
             }
 
-
-
+            // 바로 Terminate Transaction?
 
 
         } catch (Exception e) {

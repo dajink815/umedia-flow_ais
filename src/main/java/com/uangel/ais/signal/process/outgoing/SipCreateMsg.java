@@ -11,10 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import stack.java.uangel.sip.InvalidArgumentException;
 import stack.java.uangel.sip.address.URI;
-import stack.java.uangel.sip.header.CSeqHeader;
-import stack.java.uangel.sip.header.CallIdHeader;
-import stack.java.uangel.sip.header.FromHeader;
-import stack.java.uangel.sip.header.ToHeader;
+import stack.java.uangel.sip.header.*;
 import stack.java.uangel.sip.message.Request;
 import stack.java.uangel.sip.message.Response;
 import stack.java.uangel.sip.module.SipMessageParser;
@@ -72,8 +69,22 @@ public class SipCreateMsg extends SipCreateHeader {
         return response;
     }
 
-    // todo Create Response with CallInfo
+    // Create Response with CallInfo
+    public Response createResponse(CallInfo callInfo, int code, String method) {
+        Response response = null;
+        try {
+            CallIdHeader callIdHeader = createCallIdHeader(callInfo.getCallId());
+            CSeqHeader cSeqHeader = createCSeqHeader(method, callInfo.getCSeq());
+            FromHeader fromHeader = createFromHeader(callInfo.getFromAddress(), callInfo.getFromTag());
+            ToHeader toHeader = createToHeader(callInfo.getToAddress(), callInfo.getToTag());
+            MaxForwardsHeader mx = createMaxForwardsHeader();
+            response = sipSignal.getMessageFactory().createResponse(code, callIdHeader, cSeqHeader, fromHeader, toHeader, callInfo.getViaHeader(), mx);
+        } catch (Exception e) {
+            log.error("SipCreateReqRes.createResponse", e);
+        }
 
+        return response;
+    }
 
     // Create Request with CallInfo
     public Request createRequest(CallInfo callInfo, String method) throws ParseException, InvalidArgumentException {

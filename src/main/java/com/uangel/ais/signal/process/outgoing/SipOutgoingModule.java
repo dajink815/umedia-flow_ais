@@ -53,9 +53,9 @@ public class SipOutgoingModule {
         log.info("Outgoing InviteOk Response [\r\n{}]", response);
     }
 
-    public void outError(CallInfo callInfo) {
+    public void outError(CallInfo callInfo, int code, String method) {
         OutError outError = new OutError();
-        Response response = outError.send(callInfo);
+        Response response = outError.send(callInfo, code, method);
         log.info("Outgoing Error Response [\r\n{}]", response);
     }
 }

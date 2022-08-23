@@ -28,4 +28,17 @@ public class RmqCallCloseRes extends RmqAiwfOutgoing {
 
         return sendTo(msg);
     }
+
+    public boolean send(String tId, int reasonCode, String reason, String callId, String msgType) {
+        Header.Builder headerBuilder = RmqBuilder.getDefaultHeader(msgType);
+        headerBuilder.setTId(tId);
+
+        Message msg = Message.newBuilder()
+                .setHeader(headerBuilder.build())
+                .setCallCloseRes(CallCloseRes.newBuilder()
+                        .setCallId(callId))
+                .build();
+
+        return sendTo(msg);
+    }
 }
