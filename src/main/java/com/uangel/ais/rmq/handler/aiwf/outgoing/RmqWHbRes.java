@@ -4,6 +4,7 @@ import com.uangel.ais.rmq.common.RmqBuilder;
 import com.uangel.ais.rmq.handler.aiwf.RmqAiwfOutgoing;
 import com.uangel.protobuf.Header;
 import com.uangel.protobuf.Message;
+import com.uangel.protobuf.WHbRes;
 
 /**
  * @author dajin kim
@@ -20,6 +21,7 @@ public class RmqWHbRes extends RmqAiwfOutgoing {
 
         Message msg = Message.newBuilder()
                 .setHeader(headerBuilder.build())
+                .setWHbRes(WHbRes.newBuilder())
                 .build();
 
         return sendTo(msg);

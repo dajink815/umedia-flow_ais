@@ -41,25 +41,16 @@ public class RmqOutgoingMessage {
 
             Header header = rmqMessage.getHeader();
             String msgType = header.getType();
+            int bodyNum = rmqMessage.getBodyCase().getNumber();
 
-            if (rmqMessage.getBodyCase().getNumber() == Message.MHBRES_FIELD_NUMBER
-                    || rmqMessage.getBodyCase().getNumber() == Message.WHBRES_FIELD_NUMBER) {
-                //if (suppr.touch(msgType + header.getMsgFrom())) {
-                    log.info("[RMQ MESSAGE] send [{}] [{}] --> [{}]", msgType, header.getReasonCode(), target);
-                    log.debug("[RMQ MESSAGE] Json --> {}", json);
-                //}
+            if (bodyNum == Message.MHBRES_FIELD_NUMBER || bodyNum == Message.WHBRES_FIELD_NUMBER
+                    // remove
+                    || bodyNum == Message.MLOGINRES_FIELD_NUMBER) {
+                if (suppr.touch(msgType + header.getMsgFrom())) {
+                    printMsg(rmqMessage, json);
+                }
             } else {
-                log.info("[RMQ MESSAGE] send [{}] [{}] --> [{}]", msgType, header.getReasonCode(), target);
-                log.debug("[RMQ MESSAGE] Json --> {}", json);
-            }
-
-            // Check Body Type
-            String bodyCase = rmqMessage.getBodyCase().toString();
-            String typeCheck = StringUtil.removeUnderBar(msgType);
-            if (!bodyCase.equalsIgnoreCase(typeCheck)) {
-                log.warn("RmqOutgoingMessage.sendTo Check Body type [{}]", bodyCase);
-            } else {
-                log.debug("RmqOutgoingMessage.sendTo Body type [{}]", bodyCase);
+                printMsg(rmqMessage, json);
             }
 
             RmqClient client = RmqManager.getInstance().getRmqClient(target);
@@ -77,5 +68,22 @@ public class RmqOutgoingMessage {
         }
 
         return result;
+    }
+
+    private void printMsg(Message rmqMessage, String json) {
+        Header header = rmqMessage.getHeader();
+        String msgType = header.getType();
+
+        log.info("[RMQ MESSAGE] send [{}] [{}] --> [{}]", msgType, header.getReasonCode(), target);
+        log.debug("[RMQ MESSAGE] Json --> {}", json);
+
+        // Check Body Type
+        String bodyCase = rmqMessage.getBodyCase().toString();
+        String typeCheck = StringUtil.removeUnderBar(msgType);
+        if (!bodyCase.equalsIgnoreCase(typeCheck)) {
+            log.warn("RmqOutgoingMessage.sendTo Check Body type [{}]", bodyCase);
+        } else {
+            log.debug("RmqOutgoingMessage.sendTo Body type [{}]", bodyCase);
+        }
     }
 }

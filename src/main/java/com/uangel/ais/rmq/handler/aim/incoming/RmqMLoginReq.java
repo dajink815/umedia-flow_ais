@@ -26,6 +26,7 @@ public class RmqMLoginReq {
         }
 
         sessionInfo.updateLastHbTime();
+        sessionInfo.setLoginFlag(true);
 
 /*        if (sessionInfo.isTimeoutFlag()) {
             sessionInfo.setTimeoutFlag(false);

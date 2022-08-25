@@ -100,29 +100,19 @@ public class RmqServer {
             }
 
             Header header = rmqMsg.getHeader();
-            int reasonCode = header.getReasonCode();
             String msgType = header.getType();
             String msgFrom = header.getMsgFrom();
+            int bodyNum = rmqMsg.getBodyCase().getNumber();
 
             // HB
-            if (rmqMsg.getBodyCase().getNumber() == Message.MHBREQ_FIELD_NUMBER
-                    || rmqMsg.getBodyCase().getNumber() == Message.WHBREQ_FIELD_NUMBER) {
-                //if (suppr.touch(msgType + msgFrom)) {
-                    log.info("[RMQ MESSAGE] onReceived [{}] [{}] <-- [{}]", msgType, reasonCode, msgFrom);
-                    printMsg(prettyMsg, ts);
-                //}
+            if (bodyNum == Message.MHBREQ_FIELD_NUMBER || bodyNum == Message.WHBREQ_FIELD_NUMBER
+                    // remove
+                    || bodyNum == Message.MLOGINREQ_FIELD_NUMBER) {
+                if (suppr.touch(msgType + msgFrom)) {
+                    printMsg(rmqMsg, prettyMsg, ts);
+                }
             } else {
-                log.info("[RMQ MESSAGE] onReceived [{}] [{}] <-- [{}]", msgType, reasonCode, msgFrom);
-                printMsg(prettyMsg, ts);
-            }
-
-            // Check Body Type
-            String bodyCase = rmqMsg.getBodyCase().toString();
-            String typeCheck = StringUtil.removeUnderBar(msgType);
-            if (!bodyCase.equalsIgnoreCase(typeCheck)) {
-                log.warn("MessageCallback.onReceived Check Body type [{}]", bodyCase);
-            } else {
-                log.debug("MessageCallback.onReceived Body type [{}]", bodyCase);
+                printMsg(rmqMsg, prettyMsg, ts);
             }
 
             // Put Queue
@@ -134,12 +124,28 @@ public class RmqServer {
             }
         }
 
-        private void printMsg(String prettyMsg, Date ts) {
+        private void printMsg(Message rmqMsg, String prettyMsg, Date ts) {
+            Header header = rmqMsg.getHeader();
+            int reasonCode = header.getReasonCode();
+            String msgType = header.getType();
+            String msgFrom = header.getMsgFrom();
+
+            log.info("[RMQ MESSAGE] onReceived [{}] [{}] <-- [{}]", msgType, reasonCode, msgFrom);
+
             if (ts != null) {
                 String time = DateFormatUtil.fastFormatYmdHmsS(ts);
                 log.debug("[RMQ MESSAGE] onReceived : {} {}", prettyMsg, time);
             } else {
                 log.debug("[RMQ MESSAGE] onReceived : {}", prettyMsg);
+            }
+
+            // Check Body Type
+            String bodyCase = rmqMsg.getBodyCase().toString();
+            String typeCheck = StringUtil.removeUnderBar(msgType);
+            if (!bodyCase.equalsIgnoreCase(typeCheck)) {
+                log.warn("MessageCallback.onReceived Check Body type [{}]", bodyCase);
+            } else {
+                log.debug("MessageCallback.onReceived Body type [{}]", bodyCase);
             }
         }
     }

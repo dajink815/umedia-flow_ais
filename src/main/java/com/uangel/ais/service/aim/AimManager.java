@@ -80,6 +80,7 @@ public class AimManager {
 
         if (checkHbTimeout(sessionInfo) && !sessionInfo.isTimeoutFlag()) {
             sessionInfo.setTimeoutFlag(true);
+            sessionInfo.setLoginFlag(false);
             log.error("[TIMEOUT] AIM Heartbeat Timeout ({})", sessionInfo.isTimeoutFlag());
         }
     }

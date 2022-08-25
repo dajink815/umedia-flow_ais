@@ -3,6 +3,7 @@ package com.uangel.ais.rmq.handler.aim.outgoing;
 import com.uangel.ais.rmq.common.RmqBuilder;
 import com.uangel.ais.rmq.handler.aim.RmqAimOutgoing;
 import com.uangel.protobuf.Header;
+import com.uangel.protobuf.MHbRes;
 import com.uangel.protobuf.Message;
 import com.uangel.protobuf.MessageBuilder;
 
@@ -21,6 +22,7 @@ public class RmqMHbRes extends RmqAimOutgoing {
 
         Message msg = Message.newBuilder()
                 .setHeader(headerBuilder.build())
+                .setMHbRes(MHbRes.newBuilder())
                 .build();
 
         return sendTo(msg);
