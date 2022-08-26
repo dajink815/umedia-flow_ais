@@ -31,8 +31,8 @@ public class ReleaseSession {
 
             CallType callType = callInfo.getCallType();
             CallState callState = callInfo.getCallState();
-/*            log.info("{}ReleaseSession : {} [{}], [{}] (State:{} {})", callInfo.getLogHeader(),
-                    callType, stopCode, reason, callState, callInfo.getSubState());*/
+            log.info("{}ReleaseSession : {}, {} (State:{} {})", callInfo.getLogHeader(),
+                    callType, releaseCode, callState, callInfo.getRmqState());
 
             // IDLE state return
             if (callState.equals(CallState.IDLE)) {
@@ -50,7 +50,7 @@ public class ReleaseSession {
             } else {
                 // INBOUND 만 고려
 
-                // Error Response 로 정리 맞는지 상태 확인
+                // todo Error Response 로 정리 맞는지 상태 확인
 
                 sipOutgoing.outError(callInfo, releaseCode, Request.INVITE);
                 rmqSender.sendHangup(callInfo);

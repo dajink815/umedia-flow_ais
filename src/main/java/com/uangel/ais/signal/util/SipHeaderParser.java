@@ -2,7 +2,12 @@ package com.uangel.ais.signal.util;
 
 import lib.java.handler.sip.header.SIPHeaderNames;
 import stack.java.uangel.sip.header.ContactHeader;
+import stack.java.uangel.sip.header.Header;
 import stack.java.uangel.sip.message.Message;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.ListIterator;
 
 
 /**
@@ -30,5 +35,21 @@ public class SipHeaderParser {
             contactStr = contactHeader.getAddress().getURI().toString();
         }
         return contactStr;
+    }
+
+    public static <T> List<T> createSipHeaderListType(Message message, String headerField, Class<T> clazz) {
+        List<T> valList = new ArrayList<>();
+
+        for (ListIterator<?> li = message.getHeaderNames(); li.hasNext(); ) {
+            String headerName = String.valueOf(li.next());
+            for (ListIterator<?> l = message.getHeaders(headerName); l.hasNext(); ) {
+                Header header = (Header) l.next();
+                if (headerName.equalsIgnoreCase(headerField)) {
+                    valList.add(clazz.cast(header));
+                }
+            }
+        }
+
+        return valList;
     }
 }

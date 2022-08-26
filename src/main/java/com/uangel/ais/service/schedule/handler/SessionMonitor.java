@@ -20,7 +20,7 @@ public class SessionMonitor extends IntervalTaskUnit {
     }
 
     private void printSessionCount() {
-        log.debug("session monitor: callSession count : {}", callManager.getCallInfoSize());
+        log.debug("CallSession count : {}", callManager.getCallInfoSize());
 /*        log.debug("Rmq Status LOCAL [{} (Block:{})], AIWF [{} (Block:{})]",
                 appInstance.isLocalRmqConnect(), appInstance.isLocalRmqBlocked(),
                 appInstance.isAiwfRmqConnect(), appInstance.isAiwfRmqBlocked());*/

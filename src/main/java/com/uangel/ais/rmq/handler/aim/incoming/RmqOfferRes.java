@@ -3,6 +3,7 @@ package com.uangel.ais.rmq.handler.aim.incoming;
 import com.uangel.ais.rmq.common.RmqMsgType;
 import com.uangel.ais.rmq.handler.RmqMsgSender;
 import com.uangel.ais.session.CallManager;
+import com.uangel.ais.session.ReleaseSession;
 import com.uangel.ais.session.model.CallInfo;
 import com.uangel.ais.session.state.RmqState;
 import com.uangel.ais.signal.process.outgoing.SipOutgoingModule;
@@ -34,9 +35,11 @@ public class RmqOfferRes {
         CallInfo callInfo = CallManager.getInstance().getCallInfo(callId);
 
         if (callInfo == null) {
+            log.warn("() ({}) () OfferRes Fail Find Session", callId);
 
             // Error Response
             // hangup, CallStop
+
 
             return;
         }
@@ -55,7 +58,10 @@ public class RmqOfferRes {
 
         // offerRes Fail -> Error Response -> hangup, CallStop
         if (RmqMsgType.isRmqFail(header.getReasonCode())) {
-
+            // todo OfferRes Fail Error Code
+            log.warn("{}OfferRes Fail - {} ({})", callInfo.getLogHeader(), header.getReason(), header.getReasonCode());
+            ReleaseSession releaseSession = new ReleaseSession();
+            releaseSession.release(callInfo, 415);
             return;
         }
 

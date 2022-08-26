@@ -29,9 +29,8 @@ public class RmqCallStartRes {
         // res check isEmpty
 
         String callId = res.getCallId();
-        int reasonCode = header.getReasonCode();
-        if (RmqMsgType.isRmqFail(reasonCode)) {
-            log.error("({}) CallStartRes FAIL [{}]", callId, reasonCode);
+        if (RmqMsgType.isRmqFail(header.getReasonCode())) {
+            log.warn("() ({}) () CallStartRes Fail - {} ({})", callId, header.getReason(), header.getReasonCode());
         }
 
         // get CallInfo -> lock -> Check RmqState
@@ -50,9 +49,5 @@ public class RmqCallStartRes {
         } finally {
             callInfo.unlock();
         }
-
-
-        SleepUtil.trySleep(5000);
-        SipOutgoingModule.getInstance().outBye(callInfo);
     }
 }

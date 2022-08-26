@@ -2,6 +2,7 @@ package com.uangel.ais.rmq.handler.aim.incoming;
 
 import com.uangel.ais.rmq.common.RmqMsgType;
 import com.uangel.ais.session.CallManager;
+import com.uangel.ais.session.ReleaseSession;
 import com.uangel.ais.session.model.CallInfo;
 import com.uangel.ais.session.state.RmqState;
 import com.uangel.ais.signal.process.outgoing.SipOutgoingModule;
@@ -54,7 +55,10 @@ public class RmqNegoRes {
 
         // negoRes Fail -> Error Response -> hangup, CallStop
         if (RmqMsgType.isRmqFail(header.getReasonCode())) {
-
+            // todo NegoRes Fail Error Code
+            log.warn("{}NegoRes Fail - {} ({})", callInfo.getLogHeader(), header.getReason(), header.getReasonCode());
+            ReleaseSession releaseSession = new ReleaseSession();
+            releaseSession.release(callInfo, 415);
             return;
         }
 

@@ -1,9 +1,7 @@
 package com.uangel.ais.service.schedule;
 
 import com.uangel.ais.service.schedule.base.IntervalTaskUnit;
-import com.uangel.ais.service.schedule.handler.HbHandler;
-import com.uangel.ais.service.schedule.handler.SessionHandler;
-import com.uangel.ais.service.schedule.handler.SessionMonitor;
+import com.uangel.ais.service.schedule.handler.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -31,9 +29,11 @@ public class IntervalTaskManager {
     }
 
     public void init(){
-        addJob(SessionMonitor.class.getSimpleName(), new SessionMonitor(TASK_INTERVAL));
-        addJob(SessionHandler.class.getSimpleName(), new SessionHandler(TASK_INTERVAL));
-        addJob(HbHandler.class.getSimpleName(),      new HbHandler(TASK_INTERVAL));
+        addJob(SessionMonitor.class.getSimpleName(),    new SessionMonitor(TASK_INTERVAL));
+        addJob(SessionHandler.class.getSimpleName(),    new SessionHandler(TASK_INTERVAL));
+        addJob(HbHandler.class.getSimpleName(),         new HbHandler(TASK_INTERVAL));
+        addJob(LongCallHandler.class.getSimpleName(),   new LongCallHandler(TASK_INTERVAL));
+        addJob(RmqTimeoutHandler.class.getSimpleName(), new RmqTimeoutHandler(TASK_INTERVAL));
     }
 
     public static IntervalTaskManager getInstance() {

@@ -52,6 +52,8 @@ public class RmqCallIncomingRes {
         }
 
         if (RmqMsgType.isRmqFail(header.getReasonCode())) {
+            log.warn("() ({}) () CallIncomingRes Fail - {} ({})", callId, header.getReason(), header.getReasonCode());
+            // todo CallIncomingRes Fail
             // CallIncomingRes Fail
             // Error Response
             // CallStop

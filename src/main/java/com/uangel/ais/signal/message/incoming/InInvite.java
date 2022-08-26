@@ -18,6 +18,8 @@ import stack.java.uangel.sip.header.ViaHeader;
 import stack.java.uangel.sip.message.Request;
 import stack.java.uangel.sip.module.SipMessageParser;
 
+import java.util.List;
+
 import static lib.java.handler.sip.header.SIPHeaderNames.*;
 
 /**
@@ -107,6 +109,10 @@ public class InInvite extends SipMessageParser {
         callInfo.setCSeq(((CSeqHeader) request.getHeader(CSeqHeader.NAME)).getSeqNumber());
 
         // Request HashMap
+
+
+        List<ViaHeader> viaHeaderList = SipHeaderParser.createSipHeaderListType(request, ViaHeader.NAME, ViaHeader.class);
+        callInfo.setViaHeader(viaHeaderList);
 
         // Parse SDP
         String sdp = null;

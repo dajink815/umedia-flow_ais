@@ -28,9 +28,8 @@ public class RmqCallStopRes {
         // res check isEmpty
 
         String callId = res.getCallId();
-        int reasonCode = header.getReasonCode();
-        if (RmqMsgType.isRmqFail(reasonCode)) {
-            log.error("({}) CallStopRes FAIL [{}]", callId, reasonCode);
+        if (RmqMsgType.isRmqFail(header.getReasonCode())) {
+            log.warn("() ({}) () CallStopRes Fail - {} ({})", callId, header.getReason(), header.getReasonCode());
         }
 
         // get CallInfo -> lock -> Check RmqState

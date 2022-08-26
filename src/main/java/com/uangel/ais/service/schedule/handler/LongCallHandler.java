@@ -1,7 +1,72 @@
 package com.uangel.ais.service.schedule.handler;
 
+import com.uangel.ais.service.schedule.base.IntervalTaskUnit;
+import com.uangel.ais.session.CallManager;
+import com.uangel.ais.session.ReleaseSession;
+import com.uangel.ais.util.DateFormatUtil;
+import com.uangel.ais.util.SleepUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.Objects;
+
 /**
  * @author dajin kim
  */
-public class LongCallHandler {
+public class LongCallHandler extends IntervalTaskUnit {
+    private static final Logger log = LoggerFactory.getLogger(LongCallHandler.class);
+
+    public LongCallHandler(int interval) {
+        super(interval);
+    }
+
+    @Override
+    public void run() {
+        checkLongCall();
+    }
+
+    private void checkLongCall() {
+        int longCallTimer = config.getLongCall();
+        ReleaseSession releaseSession = new ReleaseSession();
+
+        try {
+            callManager.getCallIds().stream()
+                    .map(callManager::getCallInfo)
+                    .filter(Objects::nonNull)
+                    .filter(callInfo -> callManager.checkLongCall(callInfo, longCallTimer))
+                    .forEach(callInfo -> {
+
+                        String createTime = DateFormatUtil.formatYmdHmsS(callInfo.getCreateTime());
+                        log.warn("{} LONG CALL [T:{}] [C:{}] [State:{} {}]", callInfo.getLogHeader(),
+                                longCallTimer, createTime, callInfo.getCallState(), callInfo.getRmqState());
+
+                        // todo LongCall Error Code
+                        releaseSession.release(callInfo, 500);
+
+                    });
+        } catch (Exception e) {
+            log.error("LongCallHandler.checkLongCall.Exception ", e);
+        }
+    }
+
+
+    public static void main(String[] args) {
+        CallManager callManager = CallManager.getInstance();
+        callManager.createCallInfo("test");
+
+        SleepUtil.trySleep(6000);
+
+        callManager.getCallIds().stream()
+                .map(callManager::getCallInfo)
+                .filter(Objects::nonNull)
+                .filter(callInfo -> callManager.checkLongCall(callInfo, 5000))
+                .forEach(callInfo -> {
+                    System.out.println("LongCallId : " + callInfo.getCallId());
+
+                    String createTime = DateFormatUtil.formatYmdHmsS(callInfo.getCreateTime());
+                    System.out.println("CreateTime : " +createTime);
+                    System.out.println("CurrentTime : " + DateFormatUtil.currentTimeStamp());
+                });
+
+    }
 }
