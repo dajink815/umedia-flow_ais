@@ -1,6 +1,6 @@
 package com.uangel.ais.rmq.handler.aim.incoming;
 
-import com.uangel.ais.rmq.common.RmqMsgType;
+import com.uangel.ais.rmq.type.RmqMsgType;
 import com.uangel.ais.session.CallManager;
 import com.uangel.ais.session.ReleaseSession;
 import com.uangel.ais.session.model.CallInfo;
@@ -34,10 +34,8 @@ public class RmqNegoRes {
         CallInfo callInfo = CallManager.getInstance().getCallInfo(callId);
 
         if (callInfo == null) {
-
-            // Error Response
-            // hangup, CallStop
-
+            // 중간에 세션 정리된 상태
+            log.warn("() ({}) () NegoRes Fail Find Session", callId);
             return;
         }
 

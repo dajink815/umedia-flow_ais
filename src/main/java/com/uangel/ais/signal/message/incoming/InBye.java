@@ -42,7 +42,8 @@ public class InBye {
 
 
         if (callInfo == null) {
-
+            // 이미 세션이 정리된 상태
+            log.warn("() ({}) () InBye Fail Find Session", callId);
             return;
         }
 

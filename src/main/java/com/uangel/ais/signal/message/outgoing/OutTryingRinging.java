@@ -28,7 +28,6 @@ public class OutTryingRinging {
     public Response sendRinging(CallInfo callInfo) {
         if (callInfo == null) {
             log.warn("() () () OutTryingRinging.sendRinging - CallInfo is Null");
-            // Error Response
             return null;
         }
 

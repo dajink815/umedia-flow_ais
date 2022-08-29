@@ -7,6 +7,7 @@ import com.uangel.ais.service.schedule.IntervalTaskManager;
 import com.uangel.ais.signal.SipManager;
 import com.uangel.ais.util.SleepUtil;
 import com.uangel.ais.rmq.RmqManager;
+import com.uangel.protobuf.MessageBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,6 +56,9 @@ public class ServiceManager {
 
     private void startService() {
         log.info("Start Service...");
+
+        // Default msgFrom
+        MessageBuilder.setDefaultMsgFrom(instance.getConfig().getAis());
 
         // SIP , RMQ
         sipManager = SipManager.getInstance();

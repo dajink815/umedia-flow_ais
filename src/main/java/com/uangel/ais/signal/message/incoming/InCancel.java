@@ -29,8 +29,8 @@ public class InCancel {
 
         CallInfo callInfo = callManager.getCallInfo(callId);
         if (callInfo == null) {
-            // Log
-            // Error Response
+            // 이미 세션이 정리된 상태
+            log.warn("() ({}) () InCancel Fail Find Session", callId);
             return;
         }
 

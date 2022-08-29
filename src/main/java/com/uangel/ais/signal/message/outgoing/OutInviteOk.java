@@ -26,7 +26,7 @@ public class OutInviteOk {
         Response response = null;
 
         if (callInfo == null) {
-
+            log.warn("() () () OutInviteOk.send - CallInfo is Null");
             return null;
         }
 

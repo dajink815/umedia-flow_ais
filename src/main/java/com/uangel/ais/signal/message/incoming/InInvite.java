@@ -5,6 +5,7 @@ import com.uangel.ais.service.AppInstance;
 import com.uangel.ais.session.CallManager;
 import com.uangel.ais.session.model.CallInfo;
 import com.uangel.ais.session.state.CallState;
+import com.uangel.ais.signal.process.outgoing.OutResponse;
 import com.uangel.ais.signal.process.outgoing.SipOutgoingModule;
 import com.uangel.ais.signal.util.SipHeaderParser;
 import lib.java.handler.sip.Utils;
@@ -64,7 +65,13 @@ public class InInvite extends SipMessageParser {
         // Create CallInfo
         CallInfo callInfo = callManager.createCallInfo(callId);
         if (callInfo == null) {
+            // log
+
             // Error Response
+            OutResponse outResponse = new OutResponse();
+            outResponse.sendResponse(request, 500, null, st);
+            // Terminate ST
+
             return;
         }
 

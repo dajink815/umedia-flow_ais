@@ -1,11 +1,9 @@
 package com.uangel.ais.rmq.handler.aiwf.incoming;
 
-import com.uangel.ais.rmq.common.RmqMsgType;
+import com.uangel.ais.rmq.type.RmqMsgType;
 import com.uangel.ais.session.CallManager;
 import com.uangel.ais.session.model.CallInfo;
 import com.uangel.ais.session.state.RmqState;
-import com.uangel.ais.signal.process.outgoing.SipOutgoingModule;
-import com.uangel.ais.util.SleepUtil;
 import com.uangel.protobuf.CallStartRes;
 import com.uangel.protobuf.Header;
 import com.uangel.protobuf.Message;
@@ -36,7 +34,8 @@ public class RmqCallStartRes {
         // get CallInfo -> lock -> Check RmqState
         CallInfo callInfo = CallManager.getInstance().getCallInfo(callId);
         if (callInfo == null) {
-
+            // 중간에 세션 정리된 상태
+            log.warn("() ({}) () CallStartRes Fail Find Session", callId);
             return;
         }
 

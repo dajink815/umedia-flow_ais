@@ -17,6 +17,8 @@
         <java.version>11</java.version>
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
+        <!-- protobuf msg version -->
+        <rmqmsg.version>1.0.3</rmqmsg.version>
     </properties>
 
     <repositories>
@@ -105,7 +107,7 @@ number of the protoc.-->
         <dependency>
             <groupId>com.uangel.protobuf</groupId>
             <artifactId>aipbmsg</artifactId>
-            <version>1.0.2</version>
+            <version>${rmqmsg.version}</version>
         </dependency>
 
         <dependency>

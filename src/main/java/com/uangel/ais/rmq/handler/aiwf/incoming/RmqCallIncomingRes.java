@@ -1,6 +1,6 @@
 package com.uangel.ais.rmq.handler.aiwf.incoming;
 
-import com.uangel.ais.rmq.common.RmqMsgType;
+import com.uangel.ais.rmq.type.RmqMsgType;
 import com.uangel.ais.rmq.handler.RmqMsgSender;
 import com.uangel.ais.session.CallManager;
 import com.uangel.ais.session.model.CallInfo;
@@ -33,10 +33,8 @@ public class RmqCallIncomingRes {
         CallInfo callInfo = CallManager.getInstance().getCallInfo(callId);
 
         if (callInfo == null) {
-
-            // Error Response
-            // CallStop
-
+            // 중간에 세션 정리된 상태
+            log.warn("() ({}) () IncomingCallRes Fail Find Session", callId);
             return;
         }
 

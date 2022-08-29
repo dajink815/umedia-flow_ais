@@ -1,4 +1,4 @@
-package com.uangel.ais.rmq.common;
+package com.uangel.ais.rmq.type;
 
 /**
  * @author dajin kim
@@ -61,8 +61,10 @@ public class RmqMsgType {
 
     public static final int REASON_CODE_SUCCESS = 0;
     public static final int REASON_CODE_SUCCESS_200 = 200;
+    public static final int REASON_CODE_NO_SESSION = 4000;
 
     public static final String REASON_SUCCESS = "SUCCESS";
+    public static final String REASON_NO_SESSION = "NO_SESSION";
 
     /**
      * @fn isRmqFail

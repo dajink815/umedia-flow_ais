@@ -1,10 +1,8 @@
 package com.uangel.ais.rmq.handler;
 
-import com.uangel.ais.rmq.common.RmqMsgType;
-import com.uangel.ais.rmq.handler.aim.outgoing.*;
-import com.uangel.ais.rmq.handler.aiwf.outgoing.*;
 import com.uangel.ais.session.model.CallInfo;
 import com.uangel.ais.session.state.RmqState;
+import com.uangel.protobuf.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -13,7 +11,7 @@ import java.util.EnumSet;
 /**
  * @author dajin kim
  */
-public class RmqMsgSender {
+public class RmqMsgSender extends RmqOutgoingMessage {
     static final Logger log = LoggerFactory.getLogger(RmqMsgSender.class);
     private static RmqMsgSender sender;
 
@@ -33,31 +31,41 @@ public class RmqMsgSender {
             RmqState.STOP,
             RmqState.IDLE
     );
+
     // AIM
     public void sendMLoginRes(String tId) {
-        RmqMLoginRes res = new RmqMLoginRes();
-        res.send(tId, RmqMsgType.M_LOGIN_RES);
+        sendToAim(new MessageBuilder()
+                .setBody(MLoginRes.newBuilder().build())
+                .settId(tId));
     }
 
     public void sendMHbRes(String tId) {
-        RmqMHbRes res = new RmqMHbRes();
-        res.send(tId, RmqMsgType.M_HB_RES);
+        sendToAim(new MessageBuilder()
+                .setBody(MHbRes.newBuilder().build())
+                .settId(tId));
     }
 
     public void sendOffer(CallInfo callInfo) {
         callInfo.setRmqState(RmqState.OFFER_REQ);
         callInfo.updateLastRmqTime();
 
-        RmqOfferReq req = new RmqOfferReq();
-        req.send(callInfo, RmqMsgType.OFFER_REQ);
+        sendToAim(new MessageBuilder()
+                .setBody(OfferReq.newBuilder()
+                        .setCallId(callInfo.getCallId())
+                        .setFromNo(callInfo.getFromMdn())
+                        .setToNo(callInfo.getToMdn())
+                        .setSdp(callInfo.getSdp()).build()));
     }
 
     public void sendNego(CallInfo callInfo) {
         callInfo.setRmqState(RmqState.NEGO_REQ);
         callInfo.updateLastRmqTime();
 
-        RmqNegoReq req = new RmqNegoReq();
-        req.send(callInfo, RmqMsgType.NEGO_REQ);
+        sendToAim(new MessageBuilder()
+                .setBody(NegoReq.newBuilder()
+                        .setCallId(callInfo.getCallId())
+                        .setSdp(callInfo.getSdp()).build()));
+
     }
 
     public void sendHangup(CallInfo callInfo) {
@@ -66,24 +74,30 @@ public class RmqMsgSender {
             return;
         }
 
-        RmqHangupReq req = new RmqHangupReq();
-        req.send(callInfo, RmqMsgType.HANGUP_REQ);
+        sendToAim(new MessageBuilder()
+                .setBody(HangupReq.newBuilder()
+                        .setCallId(callInfo.getCallId()).build()));
+
     }
 
     // todo CallInfo Null 메시지 전송 케이스?
 
     // AIWF
     public void sendWHbRes(String tId) {
-        RmqWHbRes res = new RmqWHbRes();
-        res.send(tId, RmqMsgType.W_HB_RES);
+        sendToAiwf(new MessageBuilder()
+                .setBody(WHbRes.newBuilder().build())
+                .settId(tId));
     }
 
     public void sendCallIncoming(CallInfo callInfo) {
         callInfo.setRmqState(RmqState.INCOMING);
         callInfo.updateLastRmqTime();
 
-        RmqCallIncomingReq req = new RmqCallIncomingReq();
-        req.send(callInfo, RmqMsgType.CALL_INCOMING_REQ);
+        sendToAiwf(new MessageBuilder()
+                .setBody(CallIncomingReq.newBuilder()
+                        .setCallId(callInfo.getCallId())
+                        .setFromNo(callInfo.getFromMdn())
+                        .setToNo(callInfo.getToMdn()).build()));
     }
 
     public void sendCallStart(CallInfo callInfo) {
@@ -91,17 +105,24 @@ public class RmqMsgSender {
         callInfo.setRmqState(RmqState.START);
         callInfo.updateLastRmqTime();
 
-        RmqCallStartReq req = new RmqCallStartReq();
-        req.send(callInfo, RmqMsgType.CALL_START_REQ);
+        sendToAiwf(new MessageBuilder()
+                .setBody(CallStartReq.newBuilder()
+                        .setCallId(callInfo.getCallId()).build()));
     }
 
     public void sendCallCloseRes(String tId, CallInfo callInfo) {
-        RmqCallCloseRes res = new RmqCallCloseRes();
-        res.send(tId, callInfo, RmqMsgType.CALL_CLOSE_RES);
+        sendToAiwf(new MessageBuilder()
+                .setBody(CallCloseRes.newBuilder()
+                        .setCallId(callInfo.getCallId()).build())
+                .settId(tId));
     }
     public void sendCallCloseRes(String tId, int reasonCode, String reason, String callId) {
-        RmqCallCloseRes res = new RmqCallCloseRes();
-        res.send(tId, reasonCode, reason, callId, RmqMsgType.CALL_CLOSE_RES);
+        sendToAiwf(new MessageBuilder()
+                .setBody(CallCloseRes.newBuilder()
+                        .setCallId(callId).build())
+                .settId(tId)
+                .setReasonCode(reasonCode)
+                .setReason(reason));
     }
 
     // CallCloseRes Fail?
@@ -111,15 +132,18 @@ public class RmqMsgSender {
         callInfo.setRmqState(RmqState.STOP);
         callInfo.updateLastRmqTime();
 
-        RmqCallStopReq req = new RmqCallStopReq();
-        req.send(callInfo, RmqMsgType.CALL_STOP_REQ);
+        sendToAiwf(new MessageBuilder()
+                .setBody(CallStopReq.newBuilder()
+                        .setCallId(callInfo.getCallId()).build()));
     }
-
     public void sendCallStop(CallInfo callInfo, int reasonCode, String reason) {
         callInfo.setRmqState(RmqState.STOP);
         callInfo.updateLastRmqTime();
 
-        RmqCallStopReq req = new RmqCallStopReq();
-        req.send(callInfo, RmqMsgType.CALL_STOP_REQ, reasonCode, reason);
+        sendToAiwf(new MessageBuilder()
+                .setBody(CallStopReq.newBuilder()
+                        .setCallId(callInfo.getCallId()).build())
+                .setReasonCode(reasonCode)
+                .setReason(reason));
     }
 }

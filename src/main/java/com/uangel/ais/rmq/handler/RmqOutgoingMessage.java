@@ -9,6 +9,7 @@ import com.uangel.protobuf.Message;
 import com.uangel.ais.rmq.module.RmqClient;
 import com.uangel.ais.service.AppInstance;
 import com.uangel.ais.util.Suppress;
+import com.uangel.protobuf.MessageBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -18,20 +19,29 @@ import org.slf4j.LoggerFactory;
 public class RmqOutgoingMessage {
     static final Logger log = LoggerFactory.getLogger(RmqOutgoingMessage.class);
     private static final Suppress suppr = new Suppress(1000L * 30);
-    private final String target;
+    private static final AisConfig config = AppInstance.getInstance().getConfig();
 
-    public RmqOutgoingMessage(String target) {
-        this.target = target;
+    public RmqOutgoingMessage() {
+        // nothing
     }
 
-    public boolean sendTo(Message rmqMessage) {
-        return sendTo(this.target, rmqMessage);
+    public boolean sendToAim(MessageBuilder builder) {
+        return this.sendToAim(builder.build());
+    }
+    public boolean sendToAim(Message rmqMessage) {
+        return this.sendTo(config.getAim(), rmqMessage);
     }
 
-    public boolean sendTo(String target, Message rmqMessage) {
+    public boolean sendToAiwf(MessageBuilder builder) {
+        return this.sendToAiwf(builder.build());
+    }
+    public boolean sendToAiwf(Message rmqMessage) {
+        return this.sendTo(config.getAiwf(), rmqMessage);
+    }
+
+    private boolean sendTo(String target, Message rmqMessage) {
         boolean result = false;
 
-        AisConfig config = AppInstance.getInstance().getConfig();
         if (StringUtil.isNull(target)) {
             target = config.getAiwf();
         }
@@ -47,10 +57,10 @@ public class RmqOutgoingMessage {
                     // remove
                     || bodyNum == Message.MLOGINRES_FIELD_NUMBER) {
                 if (suppr.touch(msgType + header.getMsgFrom())) {
-                    printMsg(rmqMessage, json);
+                    printMsg(rmqMessage, json, target);
                 }
             } else {
-                printMsg(rmqMessage, json);
+                printMsg(rmqMessage, json, target);
             }
 
             RmqClient client = RmqManager.getInstance().getRmqClient(target);
@@ -70,7 +80,7 @@ public class RmqOutgoingMessage {
         return result;
     }
 
-    private void printMsg(Message rmqMessage, String json) {
+    private void printMsg(Message rmqMessage, String json, String target) {
         Header header = rmqMessage.getHeader();
         String msgType = header.getType();
 
