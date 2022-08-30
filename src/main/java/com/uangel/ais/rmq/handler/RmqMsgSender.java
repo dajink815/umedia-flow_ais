@@ -80,8 +80,6 @@ public class RmqMsgSender extends RmqOutgoingMessage {
 
     }
 
-    // todo CallInfo Null 메시지 전송 케이스?
-
     // AIWF
     public void sendWHbRes(String tId) {
         sendToAiwf(new MessageBuilder()
@@ -101,7 +99,9 @@ public class RmqMsgSender extends RmqOutgoingMessage {
     }
 
     public void sendCallStart(CallInfo callInfo) {
-        // todo 호 종료중이면 Start 송신하지 않음
+        // 호 종료 중이면 Start 송신X
+        if (callInfo.isSendStop()) return;
+
         callInfo.setRmqState(RmqState.START);
         callInfo.updateLastRmqTime();
 
@@ -125,10 +125,9 @@ public class RmqMsgSender extends RmqOutgoingMessage {
                 .setReason(reason));
     }
 
-    // CallCloseRes Fail?
-
-    // todo CallStop 종료 사유 전달? reasonCode 로? bodyField 추가?
     public void sendCallStop(CallInfo callInfo) {
+        if (callInfo.isSendStop()) return;
+        callInfo.setSendStop(true);
         callInfo.setRmqState(RmqState.STOP);
         callInfo.updateLastRmqTime();
 
@@ -137,6 +136,8 @@ public class RmqMsgSender extends RmqOutgoingMessage {
                         .setCallId(callInfo.getCallId()).build()));
     }
     public void sendCallStop(CallInfo callInfo, int reasonCode, String reason) {
+        if (callInfo.isSendStop()) return;
+        callInfo.setSendStop(true);
         callInfo.setRmqState(RmqState.STOP);
         callInfo.updateLastRmqTime();
 

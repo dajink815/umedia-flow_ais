@@ -40,8 +40,7 @@ public class LongCallHandler extends IntervalTaskUnit {
                         log.warn("{} LONG CALL [T:{}] [C:{}] [State:{} {}]", callInfo.getLogHeader(),
                                 longCallTimer, createTime, callInfo.getCallState(), callInfo.getRmqState());
 
-                        // todo LongCall Error Code
-                        releaseSession.release(callInfo, 500);
+                        releaseSession.release(callInfo, config.getServiceErr());
 
                     });
         } catch (Exception e) {

@@ -14,33 +14,7 @@ public class AisConfig extends DefaultConfig {
     private static final String SECTION_COMMON = "COMMON";
     private static final String SECTION_SIP = "SIP";
     private static final String SECTION_RMQ = "RMQ";
-
-    // FIELD(COMMON)
-    private static final String FIELD_LONG_CALL = "LONG_CALL";
-    private static final String FIELD_THREAD_SIZE = "THREAD_SIZE";
-    private static final String FIELD_QUEUE_SIZE = "QUEUE_SIZE";
-
-    // FIELD(SIP)
-    private static final String FIELD_SERVER_IP = "SERVER_IP";
-    private static final String FIELD_SERVER_PORT = "SERVER_PORT";
-    private static final String FIELD_STACK_NAME = "STACK_NAME";
-
-    // FIELD(RMQ)
-    private static final String FIELD_AIS = "AIS";
-    private static final String FIELD_AIM = "AIM";
-    private static final String FIELD_AIWF = "AIWF";
-    private static final String FIELD_AIIF = "AIIF";
-    private static final String FIELD_HOST = "HOST";
-    private static final String FIELD_USER = "USER";
-    private static final String FIELD_PORT = "PORT";
-    private static final String FIELD_PASS = "PASS";
-    private static final String FIELD_AIWF_HOST = "AIWF_HOST";
-    private static final String FIELD_AIWF_USER = "AIWF_USER";
-    private static final String FIELD_AIWF_PORT = "AIWF_PORT";
-    private static final String FIELD_AIWF_PASS = "AIWF_PASS";
-    private static final String FIELD_HB_TIMEOUT = "HB_TIMEOUT";
-    private static final String FIELD_RMQ_TIMEOUT = "RMQ_TIMEOUT";
-
+    private static final String SECTION_ERROR = "ERROR";
 
     // VALUE(COMMON)
     private int longCall;
@@ -64,6 +38,12 @@ public class AisConfig extends DefaultConfig {
     private int rmqQueueSize;
     private int hbTimeout;
     private int rmqTimeout;
+
+    // VALUE(ERROR)
+    private int aimErr;
+    private int aiwfErr;
+    private int serviceErr;
+    private int timeoutErr;
 
     // VALUE(SIP)
     private String serverIp;
@@ -115,37 +95,38 @@ public class AisConfig extends DefaultConfig {
         loadCommonConfig();
         loadSipConfig();
         loadRmqConfig();
+        loadErrorConfig();
     }
 
     private void loadCommonConfig() {
-        this.longCall = getIntValue(SECTION_COMMON, FIELD_LONG_CALL, 410000);
-        this.threadSize = getIntValue(SECTION_COMMON, FIELD_THREAD_SIZE, 5);
-        this.queueSize = getIntValue(SECTION_COMMON, FIELD_QUEUE_SIZE, 5);
+        this.longCall = getIntValue(SECTION_COMMON, "LONG_CALL", 410000);
+        this.threadSize = getIntValue(SECTION_COMMON, "THREAD_SIZE", 5);
+        this.queueSize = getIntValue(SECTION_COMMON, "QUEUE_SIZE", 5);
     }
 
     private void loadRmqConfig() {
-        this.ais = getStrValue(SECTION_RMQ, FIELD_AIS, "");
-        this.aim = getStrValue(SECTION_RMQ, FIELD_AIM, "");
-        this.aiwf = getStrValue(SECTION_RMQ, FIELD_AIWF, "");
-        this.aiif = getStrValue(SECTION_RMQ, FIELD_AIIF, "");
-        this.host = getStrValue(SECTION_RMQ, FIELD_HOST, "");
-        this.user = getStrValue(SECTION_RMQ, FIELD_USER, "");
-        this.port = getIntValue(SECTION_RMQ, FIELD_PORT, 5);
-        this.pass = getStrValue(SECTION_RMQ, FIELD_PASS, "");
-        this.aiwfHost = getStrValue(SECTION_RMQ, FIELD_AIWF_HOST, "");
-        this.aiwfUser = getStrValue(SECTION_RMQ, FIELD_AIWF_USER, "");
-        this.aiwfPort = getIntValue(SECTION_RMQ, FIELD_AIWF_PORT, 5);
-        this.aiwfPass = getStrValue(SECTION_RMQ, FIELD_AIWF_PASS, "");
-        this.rmqThreadSize = getIntValue(SECTION_RMQ, FIELD_THREAD_SIZE, 5);
-        this.rmqQueueSize = getIntValue(SECTION_RMQ, FIELD_QUEUE_SIZE, 5);
-        this.hbTimeout = getIntValue(SECTION_RMQ, FIELD_HB_TIMEOUT, 5000);
-        this.rmqTimeout = getIntValue(SECTION_RMQ, FIELD_RMQ_TIMEOUT, 5000);
+        this.ais = getStrValue(SECTION_RMQ, "AIS", "");
+        this.aim = getStrValue(SECTION_RMQ, "AIM", "");
+        this.aiwf = getStrValue(SECTION_RMQ, "AIWF", "");
+        this.aiif = getStrValue(SECTION_RMQ, "AIIF", "");
+        this.host = getStrValue(SECTION_RMQ, "HOST", "");
+        this.user = getStrValue(SECTION_RMQ, "USER", "");
+        this.port = getIntValue(SECTION_RMQ, "PORT", 5);
+        this.pass = getStrValue(SECTION_RMQ, "PASS", "");
+        this.aiwfHost = getStrValue(SECTION_RMQ, "AIWF_HOST", "");
+        this.aiwfUser = getStrValue(SECTION_RMQ, "AIWF_USER", "");
+        this.aiwfPort = getIntValue(SECTION_RMQ, "AIWF_PORT", 5);
+        this.aiwfPass = getStrValue(SECTION_RMQ, "AIWF_PASS", "");
+        this.rmqThreadSize = getIntValue(SECTION_RMQ, "THREAD_SIZE", 5);
+        this.rmqQueueSize = getIntValue(SECTION_RMQ, "QUEUE_SIZE", 5);
+        this.hbTimeout = getIntValue(SECTION_RMQ, "HB_TIMEOUT", 5000);
+        this.rmqTimeout = getIntValue(SECTION_RMQ, "RMQ_TIMEOUT", 5000);
     }
 
     private void loadSipConfig() {
-        this.serverIp = getStrValue(SECTION_SIP, FIELD_SERVER_IP, "127.0.0.1");
-        this.serverPort = getIntValue(SECTION_SIP, FIELD_SERVER_PORT, 5060);
-        this.stackName = getStrValue(SECTION_SIP, FIELD_STACK_NAME, "AICALL");
+        this.serverIp = getStrValue(SECTION_SIP, "SERVER_IP", "127.0.0.1");
+        this.serverPort = getIntValue(SECTION_SIP, "SERVER_PORT", 5060);
+        this.stackName = getStrValue(SECTION_SIP, "STACK_NAME", "AICALL");
 
         this.automaticDialogSupport = getStrValue(SECTION_SIP, "AUTOMATIC_DIALOG_SUPPORT", "off");
         this.logMessageContent = getStrValue(SECTION_SIP, "LOG_MESSAGE_CONTENT", "true");
@@ -164,6 +145,13 @@ public class AisConfig extends DefaultConfig {
         this.deliverTerminateEventForAck = getStrValue(SECTION_SIP, "DELIVER_TERMINATED_EVENT_FOR_ACK", "true");
         this.aggressiveCleanup = getStrValue(SECTION_SIP, "AGGRESSIVE_CLEANUP", "true");
         this.traceLevel = getStrValue(SECTION_SIP, "TRACE_LEVEL", "ais.log");
+    }
+
+    private void loadErrorConfig() {
+        this.aimErr = getIntValue(SECTION_ERROR, "AIM_ERR", 500);
+        this.aiwfErr = getIntValue(SECTION_ERROR, "AIWF_ERR", 500);
+        this.serviceErr = getIntValue(SECTION_ERROR, "SERVICE_ERR", 500);
+        this.timeoutErr = getIntValue(SECTION_ERROR, "TIMEOUT_ERR", 500);
     }
 
     // COMMON
@@ -225,6 +213,20 @@ public class AisConfig extends DefaultConfig {
     }
     public int getRmqTimeout() {
         return rmqTimeout;
+    }
+
+    // ERROR
+    public int getAimErr() {
+        return aimErr;
+    }
+    public int getAiwfErr() {
+        return aiwfErr;
+    }
+    public int getServiceErr() {
+        return serviceErr;
+    }
+    public int getTimeoutErr() {
+        return timeoutErr;
     }
 
     // SIP

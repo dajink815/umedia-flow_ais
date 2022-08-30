@@ -1,13 +1,15 @@
 package com.uangel.ais.rmq.handler.aim.incoming;
 
+import com.uangel.ais.config.AisConfig;
+import com.uangel.ais.rmq.handler.RmqIncomingMessage;
 import com.uangel.ais.rmq.type.RmqMsgType;
 import com.uangel.ais.rmq.handler.RmqMsgSender;
+import com.uangel.ais.service.AppInstance;
 import com.uangel.ais.session.CallManager;
 import com.uangel.ais.session.ReleaseSession;
 import com.uangel.ais.session.model.CallInfo;
 import com.uangel.ais.session.state.RmqState;
 import com.uangel.ais.signal.process.outgoing.SipOutgoingModule;
-import com.uangel.protobuf.Header;
 import com.uangel.protobuf.Message;
 import com.uangel.protobuf.OfferRes;
 import org.slf4j.Logger;
@@ -16,27 +18,24 @@ import org.slf4j.LoggerFactory;
 /**
  * @author dajin kim
  */
-public class RmqOfferRes {
+public class RmqOfferRes extends RmqIncomingMessage<OfferRes> {
     static final Logger log = LoggerFactory.getLogger(RmqOfferRes.class);
+    private static final AisConfig config = AppInstance.getInstance().getConfig();
 
-    public RmqOfferRes() {
-        // nothing
+    public RmqOfferRes(Message msg) {
+        super(msg);
     }
 
-    public void handle(Message msg) {
-
-        Header header = msg.getHeader();
-        OfferRes res = msg.getOfferRes();
-        // res check isEmpty
-
+    @Override
+    public void handle() {
 
         // get CallInfo -> lock -> Check RmqState
-        String callId = res.getCallId();
+        String callId = body.getCallId();
         CallInfo callInfo = CallManager.getInstance().getCallInfo(callId);
 
         if (callInfo == null) {
             // 중간에 세션 정리된 상태
-            log.warn("() ({}) () OfferRes Fail Find Session", callId);
+            log.warn("() ({}) () OfferRes Fail to Find Session", callId);
             return;
         }
 
@@ -53,16 +52,15 @@ public class RmqOfferRes {
         }
 
         // offerRes Fail -> Error Response -> hangup, CallStop
-        if (RmqMsgType.isRmqFail(header.getReasonCode())) {
-            // todo OfferRes Fail Error Code
-            log.warn("{}OfferRes Fail - {} ({})", callInfo.getLogHeader(), header.getReason(), header.getReasonCode());
+        if (RmqMsgType.isRmqFail(getReasonCode())) {
+            log.warn("{}OfferRes Fail - {} ({})", callInfo.getLogHeader(), getReason(), getReasonCode());
             ReleaseSession releaseSession = new ReleaseSession();
-            releaseSession.release(callInfo, 415);
+            releaseSession.release(callInfo, config.getAimErr());
             return;
         }
 
         // set SDP -> nego_req & InviteOk
-        callInfo.setSdp(res.getSdp());
+        callInfo.setSdp(body.getSdp());
 
         SipOutgoingModule.getInstance().outRinging(callInfo);
         RmqMsgSender.getInstance().sendNego(callInfo);

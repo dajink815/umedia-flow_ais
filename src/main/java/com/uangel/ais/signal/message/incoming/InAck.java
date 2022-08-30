@@ -28,7 +28,7 @@ public class InAck {
         CallInfo callInfo = callManager.getCallInfo(callId);
         if (callInfo == null) {
             // 이미 세션이 정리된 상태
-            log.warn("() ({}) () InAck Fail Find Session", callId);
+            log.warn("() ({}) () InAck Fail to Find Session", callId);
             return;
         }
 
@@ -38,11 +38,12 @@ public class InAck {
                 log.warn("{}Received Ack, MisMatch CallState [{}]", callInfo.getLogHeader(), callInfo.getCallState());
                 return;
             }
+            // Send CallStartReq
+            RmqMsgSender.getInstance().sendCallStart(callInfo);
         } finally {
             callInfo.unlock();
         }
 
-        RmqMsgSender.getInstance().sendCallStart(callInfo);
     }
 
 

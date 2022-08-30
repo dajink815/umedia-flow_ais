@@ -17,24 +17,24 @@ public class RmqAimConsumer {
 
         switch(msg.getBodyCase().getNumber()){
             case Message.MLOGINREQ_FIELD_NUMBER:
-                RmqMLoginReq mLoginReq = new RmqMLoginReq();
-                mLoginReq.handle(msg);
+                RmqMLoginReq mLoginReq = new RmqMLoginReq(msg);
+                mLoginReq.handle();
                 break;
             case Message.MHBREQ_FIELD_NUMBER:
-                RmqMHbReq mHbReq = new RmqMHbReq();
-                mHbReq.handle(msg);
+                RmqMHbReq mHbReq = new RmqMHbReq(msg);
+                mHbReq.handle();
                 break;
             case Message.OFFERRES_FIELD_NUMBER:
-                RmqOfferRes offerRes = new RmqOfferRes();
-                offerRes.handle(msg);
+                RmqOfferRes offerRes = new RmqOfferRes(msg);
+                offerRes.handle();
                 break;
             case Message.NEGORES_FIELD_NUMBER:
-                RmqNegoRes negoRes = new RmqNegoRes();
-                negoRes.handle(msg);
+                RmqNegoRes negoRes = new RmqNegoRes(msg);
+                negoRes.handle();
                 break;
             case Message.HANGUPRES_FIELD_NUMBER:
-                RmqHangupRes hangupRes = new RmqHangupRes();
-                hangupRes.handle(msg);
+                RmqHangupRes hangupRes = new RmqHangupRes(msg);
+                hangupRes.handle();
                 break;
             default:
                 Header header = msg.getHeader();

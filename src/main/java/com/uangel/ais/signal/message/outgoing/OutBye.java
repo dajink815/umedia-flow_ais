@@ -28,8 +28,6 @@ public class OutBye {
             SipCreateMsg sipCreateMsg = new SipCreateMsg();
             Request request = sipCreateMsg.createRequest(callInfo, Request.BYE);
 
-            // Optional Header?
-
             ClientTransaction ct = sipSignal.getSipProvider().getNewClientTransaction(request);
             ct.sendRequest();
 

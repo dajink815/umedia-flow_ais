@@ -9,6 +9,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import stack.java.uangel.sip.message.Request;
 
+import java.util.EnumSet;
+
 /**
  * @author dajin kim
  */
@@ -19,10 +21,16 @@ public class ReleaseSession {
         // nothing
     }
 
+    // Connect 이전 MainState, BYE/Error/Cancel 상태는 SIP 처리 Thread 에서 정리
+    private static final EnumSet<CallState> prevConnectState = EnumSet.of(
+            CallState.INVITE,
+            CallState.TRYING,
+            CallState.RINGING
+    );
+
     public void release(CallInfo callInfo, int releaseCode) {
         if (callInfo == null) {
             log.warn("ReleaseSession CallInfo is Null");
-            // CallInfo Null 때 세션 정리?
             return;
         }
 
@@ -31,7 +39,7 @@ public class ReleaseSession {
 
             CallType callType = callInfo.getCallType();
             CallState callState = callInfo.getCallState();
-            log.info("{}ReleaseSession : {}, {} (State:{} {})", callInfo.getLogHeader(),
+            log.warn("{}ReleaseSession : {}, {} (State:{} {})", callInfo.getLogHeader(),
                     callType, releaseCode, callState, callInfo.getRmqState());
 
             // IDLE state return
@@ -47,18 +55,14 @@ public class ReleaseSession {
                 sipOutgoing.outBye(callInfo);
                 rmqSender.sendHangup(callInfo);
                 rmqSender.sendCallStop(callInfo);
-            } else {
+            } else if (prevConnectState.contains(callState)) {
                 // INBOUND 만 고려
-
-                // todo Error Response 로 정리 맞는지 상태 확인
-
                 sipOutgoing.outError(callInfo, releaseCode, Request.INVITE);
                 rmqSender.sendHangup(callInfo);
                 rmqSender.sendCallStop(callInfo);
             }
 
             // 바로 Terminate Transaction?
-
 
         } catch (Exception e) {
             log.error("ReleaseSession.release.Exception ", e);

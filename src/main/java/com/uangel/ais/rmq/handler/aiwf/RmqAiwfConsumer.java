@@ -17,24 +17,24 @@ public class RmqAiwfConsumer {
 
         switch(msg.getBodyCase().getNumber()){
             case Message.WHBREQ_FIELD_NUMBER:
-                RmqWHbReq wHbReq = new RmqWHbReq();
-                wHbReq.handle(msg);
+                RmqWHbReq wHbReq = new RmqWHbReq(msg);
+                wHbReq.handle();
                 break;
             case Message.CALLINCOMINGRES_FIELD_NUMBER:
-                RmqCallIncomingRes callIncomingRes = new RmqCallIncomingRes();
-                callIncomingRes.handle(msg);
+                RmqCallIncomingRes callIncomingRes = new RmqCallIncomingRes(msg);
+                callIncomingRes.handle();
                 break;
             case Message.CALLSTARTRES_FIELD_NUMBER:
-                RmqCallStartRes callStartRes = new RmqCallStartRes();
-                callStartRes.handle(msg);
+                RmqCallStartRes callStartRes = new RmqCallStartRes(msg);
+                callStartRes.handle();
                 break;
             case Message.CALLCLOSEREQ_FIELD_NUMBER:
-                RmqCallCloseReq callCloseReq = new RmqCallCloseReq();
-                callCloseReq.handle(msg);
+                RmqCallCloseReq callCloseReq = new RmqCallCloseReq(msg);
+                callCloseReq.handle();
                 break;
             case Message.CALLSTOPRES_FIELD_NUMBER:
-                RmqCallStopRes callStopRes = new RmqCallStopRes();
-                callStopRes.handle(msg);
+                RmqCallStopRes callStopRes = new RmqCallStopRes(msg);
+                callStopRes.handle();
                 break;
             default:
                 Header header = msg.getHeader();

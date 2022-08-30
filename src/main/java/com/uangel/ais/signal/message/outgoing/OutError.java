@@ -1,6 +1,7 @@
 package com.uangel.ais.signal.message.outgoing;
 
 import com.uangel.ais.session.model.CallInfo;
+import com.uangel.ais.session.state.CallState;
 import com.uangel.ais.signal.process.outgoing.SipCreateMsg;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,6 +31,8 @@ public class OutError {
 
             if (response != null) {
                 callInfoSt.sendResponse(response);
+/*                if (code >= Response.BAD_REQUEST)
+                    callInfo.setCallState(CallState.ERROR);*/
             }
         } catch (Exception e) {
             log.error("OutError.send.Exception ", e);

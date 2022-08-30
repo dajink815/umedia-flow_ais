@@ -52,14 +52,12 @@ public class RmqTimeoutHandler extends IntervalTaskUnit {
                             log.warn("{}{} TIMEOUT, [T:{}] [S:{}] [State:{}]", callInfo.getLogHeader(),
                                     rmqState, rmqTimer, lastRmqTime, callInfo.getCallState());
 
-                            // todo RMQ Timeout Error Response Code
-
                             if (RmqState.STOP.equals(rmqState)) {
                                 callInfo.setCallState(CallState.IDLE);
                                 callInfo.setRmqState(RmqState.IDLE);
                             } else {
                                 // 메시지 별 별도 처리 필요?
-                                releaseSession.release(callInfo, 500);
+                                releaseSession.release(callInfo, config.getTimeoutErr());
                             }
 
                         } finally {

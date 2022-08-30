@@ -1,7 +1,12 @@
 package com.uangel.ais.signal.message.incoming;
 
+import com.uangel.ais.config.AisConfig;
 import com.uangel.ais.rmq.handler.RmqMsgSender;
 import com.uangel.ais.service.AppInstance;
+import com.uangel.ais.service.aim.AimManager;
+import com.uangel.ais.service.aim.AimSessionInfo;
+import com.uangel.ais.service.aiwf.AiwfManager;
+import com.uangel.ais.service.aiwf.AiwfSessionInfo;
 import com.uangel.ais.session.CallManager;
 import com.uangel.ais.session.model.CallInfo;
 import com.uangel.ais.session.state.CallState;
@@ -30,6 +35,7 @@ public class InInvite extends SipMessageParser {
     static final Logger log = LoggerFactory.getLogger(InInvite.class);
     private static final CallManager callManager = CallManager.getInstance();
     private static final AppInstance instance = AppInstance.getInstance();
+    private static final AisConfig config = instance.getConfig();
 
     public InInvite() {
         // nothing
@@ -44,7 +50,7 @@ public class InInvite extends SipMessageParser {
         String toAddress = ((ToHeader)request.getHeader(TO)).getAddress().toString();
         String toIp = getToHeaderIp(request);
         int toPort = getToHeaderPort(request);
-        // For Linphone Test
+        // todo For Linphone Test
         if (toPort <= 0) toPort = getRequestLinePort(request);
         log.debug("() ({}) () InInvite To [User: {}, Address: {}, Ip: {}, Port: {}]",
                 callId, toUser, toAddress, toIp, toPort);
@@ -64,35 +70,22 @@ public class InInvite extends SipMessageParser {
 
         // Create CallInfo
         CallInfo callInfo = callManager.createCallInfo(callId);
-        if (callInfo == null) {
-            // log
 
+        // 내부 오류 체크
+        String serviceError = checkServiceStatus(callInfo);
+        if (serviceError != null) {
+            // log
+            log.warn("() ({}) () InInvite Service Error [{}]", callId, serviceError);
             // Error Response
             OutResponse outResponse = new OutResponse();
-            outResponse.sendResponse(request, 500, null, st);
+            outResponse.sendResponse(request, config.getServiceErr(), callInfo, st);
             // Terminate ST
-
+            terminateST(st, callId);
             return;
         }
 
         callInfo.setCallState(CallState.INVITE);
         callInfo.setInviteSt(st);
-
-        // 내부 오류 체크
-        // 1. RMQ Down
-        if (!instance.isLocalRmqConnect() || !instance.isAiwfRmqConnect()) {
-
-            // Error Response
-            // 세션 정리
-            return;
-        }
-
-        // 2. AIM 연동 실패
-
-
-        // 3. AIWF 연동실패/status Fail
-
-
 
         String fromTag = getFromTag(request);
         Utils utils = new Utils();
@@ -116,7 +109,7 @@ public class InInvite extends SipMessageParser {
         callInfo.setCSeq(((CSeqHeader) request.getHeader(CSeqHeader.NAME)).getSeqNumber());
 
         // Request HashMap
-
+        callInfo.setRequestHeader(getHeaderMap(request));
 
         List<ViaHeader> viaHeaderList = SipHeaderParser.createSipHeaderListType(request, ViaHeader.NAME, ViaHeader.class);
         callInfo.setViaHeader(viaHeaderList);
@@ -148,7 +141,30 @@ public class InInvite extends SipMessageParser {
         RmqMsgSender.getInstance().sendCallIncoming(callInfo);
     }
 
-    private void terminateCall(CallInfo callInfo, int errCode) {
+    private String checkServiceStatus(CallInfo callInfo) {
+        if (callInfo == null)
+            return "Fail to Create Session";
+        // 1. RMQ Down
+        if (!instance.isLocalRmqConnect() || !instance.isAiwfRmqConnect())
+            return instance.getRmqStopReason();
+        // 2. AIM 연동 실패 (하나의 AIM 만 고려, ID 0)
+        AimSessionInfo aimSessionInfo = AimManager.getInstance().getAimSession(0);
+        if (aimSessionInfo.isTimeoutFlag())
+            return "AIM SERVER DOWN";
+        // 3. AIWF 연동실패/status Fail
+        AiwfSessionInfo aiwfSessionInfo = AiwfManager.getInstance().getAiwfSession(0);
+        if (aiwfSessionInfo.isTimeoutFlag() || !aiwfSessionInfo.isStatus())
+            return "AIWF SERVER ERROR";
 
+        return null;
+    }
+
+    private void terminateST(ServerTransaction st, String callId) {
+        try {
+            st.terminate();
+        } catch (ObjectInUseException e) {
+            log.error("InInvite.terminateST Error", e);
+        }
+        callManager.deleteCallInfo(callId);
     }
 }

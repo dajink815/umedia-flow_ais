@@ -1,8 +1,10 @@
 package com.uangel.ais.rmq.handler.aim.incoming;
 
+import com.uangel.ais.rmq.handler.RmqIncomingMessage;
 import com.uangel.ais.rmq.handler.RmqMsgSender;
 import com.uangel.ais.service.aim.AimManager;
 import com.uangel.ais.service.aim.AimSessionInfo;
+import com.uangel.protobuf.MHbReq;
 import com.uangel.protobuf.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,15 +12,16 @@ import org.slf4j.LoggerFactory;
 /**
  * @author dajin kim
  */
-public class RmqMHbReq {
+public class RmqMHbReq extends RmqIncomingMessage<MHbReq> {
     static final Logger log = LoggerFactory.getLogger(RmqMHbReq.class);
     private static final AimManager aimManager = AimManager.getInstance();
 
-    public RmqMHbReq() {
-        // nothing
+    public RmqMHbReq(Message msg) {
+        super(msg);
     }
 
-    public void handle(Message msg) {
+    @Override
+    public void handle() {
 
         AimSessionInfo sessionInfo = aimManager.getAimSession(0);
 
@@ -33,6 +36,6 @@ public class RmqMHbReq {
             log.error("[TIMEOUT] AIM Heartbeat Timeout ({})", sessionInfo.isTimeoutFlag());
         }
 
-        RmqMsgSender.getInstance().sendMHbRes(msg.getHeader().getTId());
+        RmqMsgSender.getInstance().sendMHbRes(getTId());
     }
 }

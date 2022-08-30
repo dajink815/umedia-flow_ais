@@ -41,7 +41,7 @@ public class SipCreateMsg extends SipCreateHeader {
 
     // Create Response with Request
     public Response createResponse(Request request, int statusCode, CallInfo callInfo) {
-        Response response = null;
+        Response response;
         try {
             response = this.sipSignal.getMessageFactory().createResponse(statusCode, request);
 
@@ -58,21 +58,23 @@ public class SipCreateMsg extends SipCreateHeader {
             }
 
             // State
-            // todo Cancel Invite487 은 Error State X
-            if (callInfo != null && statusCode >= Response.BAD_REQUEST) {
+            if (callInfo != null && statusCode >= Response.BAD_REQUEST
+                    && (!callInfo.isRecvCancel() || statusCode != Response.REQUEST_TERMINATED)) {
                 callInfo.setCallState(CallState.ERROR);
             }
 
         } catch (Exception e) {
             log.error("OutResponse.createResponse.byRequest ", e);
+            response = null;
         }
         return response;
     }
 
     // Create Response with CallInfo
     public Response createResponse(CallInfo callInfo, int code, String method) {
-        Response response = null;
+        Response response;
         try {
+            // todo Error State
             CallIdHeader callIdHeader = createCallIdHeader(callInfo.getCallId());
             CSeqHeader cSeqHeader = createCSeqHeader(method, callInfo.getCSeq());
             FromHeader fromHeader = createFromHeader(callInfo.getFromAddress(), callInfo.getFromTag());
@@ -81,6 +83,7 @@ public class SipCreateMsg extends SipCreateHeader {
             response = sipSignal.getMessageFactory().createResponse(code, callIdHeader, cSeqHeader, fromHeader, toHeader, callInfo.getViaHeader(), mx);
         } catch (Exception e) {
             log.error("SipCreateReqRes.createResponse", e);
+            response = null;
         }
 
         return response;

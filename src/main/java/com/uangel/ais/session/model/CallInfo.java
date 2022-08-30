@@ -54,10 +54,9 @@ public class CallInfo {
     private ClientTransaction byeCt;    // OutBye
     private Dialog dialog;
     private List<ViaHeader> viaHeader = new ArrayList<>();
-    // sip message
-    private String inviteMsg;
-    private String startSipMsg;
-    private String stopSipMsg;
+
+    private boolean recvCancel;
+    private boolean isSendStop;
 
     private String logHeader = "";
 
@@ -235,7 +234,6 @@ public class CallInfo {
         this.contact = contact;
     }
 
-
     public ConcurrentMap<String, List<String>> getRequestHeader() {
         return requestHeader;
     }
@@ -294,24 +292,17 @@ public class CallInfo {
         this.viaHeader = viaHeader;
     }
 
-    public String getInviteMsg() {
-        return inviteMsg;
+    public boolean isRecvCancel() {
+        return recvCancel;
     }
-    public void setInviteMsg(String inviteMsg) {
-        this.inviteMsg = inviteMsg;
-    }
-
-    public String getStartSipMsg() {
-        return startSipMsg;
-    }
-    public void setStartSipMsg(String startSipMsg) {
-        this.startSipMsg = startSipMsg;
+    public void setRecvCancel(boolean recvCancel) {
+        this.recvCancel = recvCancel;
     }
 
-    public String getStopSipMsg() {
-        return stopSipMsg;
+    public boolean isSendStop() {
+        return isSendStop;
     }
-    public void setStopSipMsg(String stopSipMsg) {
-        this.stopSipMsg = stopSipMsg;
+    public void setSendStop(boolean sendStop) {
+        isSendStop = sendStop;
     }
 }

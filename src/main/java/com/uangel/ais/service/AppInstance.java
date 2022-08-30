@@ -113,4 +113,16 @@ public class AppInstance {
     public void setAiwfRmqBlocked(boolean aiwfRmqBlocked) {
         this.aiwfRmqBlocked = aiwfRmqBlocked;
     }
+
+    public String getRmqStopReason() {
+        if (!localRmqConnect && !aiwfRmqConnect)
+            return "ALL RMQ DOWN";
+        else if (!localRmqConnect)
+            return "LOCAL RMQ DOWN";
+        else if (!aiwfRmqConnect)
+            return "AIWF RMQ DOWN";
+        else
+            return null;
+    }
+
 }

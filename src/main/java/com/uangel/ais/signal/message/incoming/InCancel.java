@@ -3,6 +3,7 @@ package com.uangel.ais.signal.message.incoming;
 import com.uangel.ais.rmq.handler.RmqMsgSender;
 import com.uangel.ais.session.CallManager;
 import com.uangel.ais.session.model.CallInfo;
+import com.uangel.ais.session.state.CallState;
 import com.uangel.ais.signal.process.outgoing.OutResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -30,11 +31,13 @@ public class InCancel {
         CallInfo callInfo = callManager.getCallInfo(callId);
         if (callInfo == null) {
             // 이미 세션이 정리된 상태
-            log.warn("() ({}) () InCancel Fail Find Session", callId);
+            log.warn("() ({}) () InCancel Fail to Find Session", callId);
             return;
         }
 
         // Cancel State
+        callInfo.setCallState(CallState.CANCEL);
+        callInfo.setRecvCancel(true);
 
         OutResponse outResponse = new OutResponse();
 

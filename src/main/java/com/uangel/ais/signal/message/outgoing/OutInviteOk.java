@@ -7,10 +7,8 @@ import com.uangel.ais.signal.process.outgoing.SipCreateMsg;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import stack.java.uangel.sip.ServerTransaction;
-import stack.java.uangel.sip.header.ContactHeader;
 import stack.java.uangel.sip.message.Response;
-
-import java.text.ParseException;
+import stack.java.uangel.sip.module.SipMessageParser;
 
 /**
  * @author dajin kim
@@ -42,17 +40,17 @@ public class OutInviteOk {
             SipCreateMsg sipCreateMsg = new SipCreateMsg();
             response = sipCreateMsg.createResponse(st.getRequest(), Response.OK, callInfo);
 
-            // Optional Header, Session-Expire
-
             // SDP, Content-Type
             SipCreateHeader sipCreateHeader = new SipCreateHeader();
             sipCreateHeader.createSdpContentType(callInfo.getSdp(), response);
 
-            // ??
             // Contact, Max-Forwards, Allow
             response.addHeader(sipCreateHeader.createContactHeader());
             response.addHeader(sipCreateHeader.createMaxForwardsHeader());
             response.addHeader(sipCreateHeader.createAllowHeader());
+
+            // Response HashMap
+            callInfo.setResponseHeader(SipMessageParser.getHeaderMap(response));
 
             st.sendResponse(response);
             st.terminate();

@@ -1,12 +1,15 @@
 package com.uangel.ais.rmq.handler.aiwf.incoming;
 
+import com.uangel.ais.config.AisConfig;
+import com.uangel.ais.rmq.handler.RmqIncomingMessage;
 import com.uangel.ais.rmq.type.RmqMsgType;
 import com.uangel.ais.rmq.handler.RmqMsgSender;
+import com.uangel.ais.service.AppInstance;
 import com.uangel.ais.session.CallManager;
+import com.uangel.ais.session.ReleaseSession;
 import com.uangel.ais.session.model.CallInfo;
 import com.uangel.ais.session.state.RmqState;
 import com.uangel.protobuf.CallIncomingRes;
-import com.uangel.protobuf.Header;
 import com.uangel.protobuf.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -14,27 +17,24 @@ import org.slf4j.LoggerFactory;
 /**
  * @author dajin kim
  */
-public class RmqCallIncomingRes {
+public class RmqCallIncomingRes extends RmqIncomingMessage<CallIncomingRes> {
     static final Logger log = LoggerFactory.getLogger(RmqCallIncomingRes.class);
+    private static final AisConfig config = AppInstance.getInstance().getConfig();
 
-    public RmqCallIncomingRes() {
-        // nothing
+    public RmqCallIncomingRes(Message message) {
+        super(message);
     }
 
-    public void handle(Message msg) {
-
-        Header header = msg.getHeader();
-        CallIncomingRes res = msg.getCallIncomingRes();
-        // res check isEmpty
-
+    @Override
+    public void handle() {
 
         // get CallInfo -> lock -> Check RmqState
-        String callId = res.getCallId();
+        String callId = body.getCallId();
         CallInfo callInfo = CallManager.getInstance().getCallInfo(callId);
 
         if (callInfo == null) {
             // 중간에 세션 정리된 상태
-            log.warn("() ({}) () IncomingCallRes Fail Find Session", callId);
+            log.warn("() ({}) () IncomingCallRes Fail to Find Session", callId);
             return;
         }
 
@@ -49,12 +49,10 @@ public class RmqCallIncomingRes {
             callInfo.unlock();
         }
 
-        if (RmqMsgType.isRmqFail(header.getReasonCode())) {
-            log.warn("() ({}) () CallIncomingRes Fail - {} ({})", callId, header.getReason(), header.getReasonCode());
-            // todo CallIncomingRes Fail
-            // CallIncomingRes Fail
-            // Error Response
-            // CallStop
+        if (RmqMsgType.isRmqFail(getReasonCode())) {
+            log.warn("() ({}) () CallIncomingRes Fail - {} ({})", callId, getReason(), getReasonCode());
+            ReleaseSession releaseSession = new ReleaseSession();
+            releaseSession.release(callInfo, config.getAiwfErr());
             return;
         }
 

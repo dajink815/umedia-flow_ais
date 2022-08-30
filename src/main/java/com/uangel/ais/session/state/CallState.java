@@ -6,5 +6,5 @@ package com.uangel.ais.session.state;
 public enum CallState {
     NEW, IDLE,
     INVITE, TRYING, RINGING, CONNECT,
-    BYE, ERROR, CANCEL, CANCEL_OK
+    BYE, ERROR, CANCEL
 }

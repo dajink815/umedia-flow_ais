@@ -43,7 +43,7 @@ public class InBye {
 
         if (callInfo == null) {
             // 이미 세션이 정리된 상태
-            log.warn("() ({}) () InBye Fail Find Session", callId);
+            log.warn("() ({}) () InBye Fail to Find Session", callId);
             return;
         }
 
@@ -54,13 +54,14 @@ public class InBye {
                 log.warn("{}Received Bye, MisMatch CallState [{}]", callInfo.getLogHeader(), callInfo.getCallState());
                 return;
             }
+            callInfo.setCallState(CallState.BYE);
+
+            // hangup, CallStop
+            RmqMsgSender sender = RmqMsgSender.getInstance();
+            sender.sendHangup(callInfo);
+            sender.sendCallStop(callInfo);
         } finally {
             callInfo.unlock();
         }
-
-        // hangup, CallStop
-        RmqMsgSender sender = RmqMsgSender.getInstance();
-        sender.sendHangup(callInfo);
-        sender.sendCallStop(callInfo);
     }
 }
