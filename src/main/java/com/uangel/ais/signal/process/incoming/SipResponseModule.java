@@ -15,11 +15,11 @@ public class SipResponseModule extends IncomingCheck {
 
     protected void inOk(ResponseEvent responseEvent, String method) {
         Response response = responseEvent.getResponse();
-        log.info("Incoming {}Ok Response [\r\n{}]", method, response);
+        log.info("Incoming {} Ok Response [\r\n{}]", method, response);
 
         if (Request.BYE.equals(method)) {
             InByeRes inByeRes = new InByeRes();
-            inByeRes.receiveOk(responseEvent);
+            inByeRes.receive(responseEvent);
         } else if(Request.OPTIONS.equals(method)) {
             // Outgoing Options?
         } else {
@@ -29,11 +29,11 @@ public class SipResponseModule extends IncomingCheck {
 
     protected void inError(ResponseEvent responseEvent, String method) {
         Response response = responseEvent.getResponse();
-        log.info("Incoming Error Response [\r\n{}]", response);
+        log.info("Incoming {} Error Response [\r\n{}]", method, response);
 
         if (Request.BYE.equals(method)) {
             InByeRes inByeRes = new InByeRes();
-            inByeRes.receiveErr(responseEvent);
+            inByeRes.receive(responseEvent);
         } else {
             log.warn("SipResponseModule.inError - Receive Other Message [{} {}]", method, response.getStatusCode());
         }

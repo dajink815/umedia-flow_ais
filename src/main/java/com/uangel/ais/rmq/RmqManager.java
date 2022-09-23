@@ -62,7 +62,7 @@ public class RmqManager {
         instance.setRmqMsgQueue(rmqMsgQueue);
 
         for (int i = 0; i < config.getRmqThreadSize(); i++) {
-            executorRmqService.execute(() -> new Thread(new RmqConsumer(rmqMsgQueue)).start());
+            executorRmqService.execute(new RmqConsumer(rmqMsgQueue));
         }
     }
 

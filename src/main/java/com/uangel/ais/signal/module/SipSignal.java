@@ -55,8 +55,6 @@ public class SipSignal implements SipListener {
             sipStack = sipFactory.createSipStack(initProperties());
         } catch (PeerUnavailableException e) {
             log.error("SipSignal.getSipStack", e);
-            // FileBugs 권장 사항
-            // System.exit( 0 );
             throw new RuntimeException();
         }
         return sipStack;

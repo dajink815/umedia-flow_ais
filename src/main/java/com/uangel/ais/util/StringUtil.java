@@ -5,14 +5,6 @@
 
 package com.uangel.ais.util;
 
-import com.google.common.net.InetAddresses;
-
-/**
- * String Util
- *
- * @file StringUtil.java
- * @author Tony Lim
- */
 public class StringUtil {
     private static final String STR_OK = "OK";
     private static final String STR_FAIL = "FAIL";
@@ -78,16 +70,6 @@ public class StringUtil {
             return false;
         }
         return true;
-    }
-
-    public static boolean validateIPAddress(String ipAddress) {
-        if (InetAddresses.isInetAddress(ipAddress)) {
-            //log.debug("The IP address " + ipAddress + " is valid");
-            return true;
-        } else {
-            //log.debug("The IP address " + ipAddress + " isn't valid");
-        }
-        return false;
     }
 
 }

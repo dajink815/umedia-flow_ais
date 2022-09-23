@@ -49,10 +49,6 @@ public class RmqTransport {
         return this.queueName;
     }
 
-    private boolean isAiwf() {
-        return StringUtil.notNull(queueName) && queueName.equals(instance.getConfig().getAiwf());
-    }
-
     private boolean isLocal() {
         return StringUtil.notNull(queueName) && !queueName.equals(instance.getConfig().getAiwf());
     }

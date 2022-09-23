@@ -33,10 +33,6 @@ public class PasswdDecryptor {
 
     public static void main(String[] args) throws Exception {
         PasswdDecryptor decryptor = new PasswdDecryptor("skt_acs", "PBEWITHMD5ANDDES");
-//        String pass=decryptor.decrypt("amqp://acs:ENC(a6QXtGt/vWduIVUhJEZqrA==)@192.168.56.101:5672");
-        //    String pass=decryptor.decrypt("amqp://acs:acs.123@192.168.56.101:5672");
-        //   System.out.println(pass);
-
         String tt = decryptor.encrypt("acs.123");
         System.out.println(tt);
         System.out.println(decryptor.decrypt0(tt));

@@ -47,25 +47,4 @@ public class LongCallHandler extends IntervalTaskUnit {
             log.error("LongCallHandler.checkLongCall.Exception ", e);
         }
     }
-
-
-    public static void main(String[] args) {
-        CallManager callManager = CallManager.getInstance();
-        callManager.createCallInfo("test");
-
-        SleepUtil.trySleep(6000);
-
-        callManager.getCallIds().stream()
-                .map(callManager::getCallInfo)
-                .filter(Objects::nonNull)
-                .filter(callInfo -> callManager.checkLongCall(callInfo, 5000))
-                .forEach(callInfo -> {
-                    System.out.println("LongCallId : " + callInfo.getCallId());
-
-                    String createTime = DateFormatUtil.formatYmdHmsS(callInfo.getCreateTime());
-                    System.out.println("CreateTime : " +createTime);
-                    System.out.println("CurrentTime : " + DateFormatUtil.currentTimeStamp());
-                });
-
-    }
 }

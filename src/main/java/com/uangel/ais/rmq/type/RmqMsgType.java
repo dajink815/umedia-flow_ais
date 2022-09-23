@@ -62,9 +62,12 @@ public class RmqMsgType {
     public static final int REASON_CODE_SUCCESS = 0;
     public static final int REASON_CODE_SUCCESS_200 = 200;
     public static final int REASON_CODE_NO_SESSION = 4000;
+    public static final int REASON_CODE_SESSION_EXIST = 4001;
+
 
     public static final String REASON_SUCCESS = "SUCCESS";
     public static final String REASON_NO_SESSION = "NO_SESSION";
+    public static final String REASON_SESSION_EXIST = "SESSION_EXIST";
 
     /**
      * @fn isRmqFail

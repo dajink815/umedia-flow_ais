@@ -84,10 +84,6 @@ public class SipRequestModule extends IncomingCheck {
             return;
         }
 
-        Request request = requestEvent.getRequest();
-        //log.info("Incoming Options Request [\r\n{}]", request);
-
-
     }
 
 

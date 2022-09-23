@@ -9,6 +9,8 @@ import com.uangel.protobuf.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static com.uangel.ais.rmq.type.RmqMsgType.*;
+
 /**
  * @author dajin kim
  */
@@ -22,20 +24,17 @@ public class RmqMLoginReq extends RmqIncomingMessage<MLoginReq> {
 
     @Override
     public void handle() {
-        AimSessionInfo sessionInfo = aimManager.getAimSession(0);
+        AimSessionInfo sessionInfo = aimManager.createAimSession(0);
+        sessionInfo.updateLastHbTime();
 
-        if (sessionInfo == null) {
-            sessionInfo = aimManager.createAimSession(0);
+        if (sessionInfo.isLoginFlag()) {
+            // Send LoginRes Fail
+            RmqMsgSender.getInstance().sendMLoginRes(getTId(), REASON_CODE_SESSION_EXIST, REASON_SESSION_EXIST);
+        } else {
+            // Send LoginRes Success
+            sessionInfo.setLoginFlag(true);
+            RmqMsgSender.getInstance().sendMLoginRes(getTId());
         }
 
-        sessionInfo.updateLastHbTime();
-        sessionInfo.setLoginFlag(true);
-
-/*        if (sessionInfo.isTimeoutFlag()) {
-            sessionInfo.setTimeoutFlag(false);
-            log.error("[TIMEOUT] AIM Heartbeat Timeout ({})", sessionInfo.isTimeoutFlag());
-        }*/
-
-        RmqMsgSender.getInstance().sendMLoginRes(getTId());
     }
 }

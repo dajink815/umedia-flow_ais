@@ -61,8 +61,8 @@ public class SipManager {
         executorRequestService = Executors.newFixedThreadPool(config.getThreadSize());
         executorResponseService = Executors.newFixedThreadPool(config.getThreadSize());
         for (int i = 0; i < config.getThreadSize(); i++) {
-            executorRequestService.execute(() -> new Thread(new SipRequestConsumer(reqQue)).start());
-            executorResponseService.execute(() -> new Thread(new SipResponseConsumer(resQue)).start());
+            executorRequestService.execute(new SipRequestConsumer(reqQue));
+            executorResponseService.execute(new SipResponseConsumer(resQue));
         }
 
         // Active 에서만 실행?

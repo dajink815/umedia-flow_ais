@@ -27,8 +27,10 @@ public class RmqMHbReq extends RmqIncomingMessage<MHbReq> {
 
         if (sessionInfo == null) {
             sessionInfo = aimManager.createAimSession(0);
+            sessionInfo.setTimeoutFlag(true);
         }
 
+        sessionInfo.setLoginFlag(true);
         sessionInfo.updateLastHbTime();
 
         if (sessionInfo.isTimeoutFlag()) {

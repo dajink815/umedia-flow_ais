@@ -38,6 +38,13 @@ public class RmqMsgSender extends RmqOutgoingMessage {
                 .setBody(MLoginRes.newBuilder().build())
                 .settId(tId));
     }
+    public void sendMLoginRes(String tId, int reasonCode, String reason) {
+        sendToAim(new MessageBuilder()
+                .setBody(MLoginRes.newBuilder().build())
+                .settId(tId)
+                .setReasonCode(reasonCode)
+                .setReason(reason));
+    }
 
     public void sendMHbRes(String tId) {
         sendToAim(new MessageBuilder()

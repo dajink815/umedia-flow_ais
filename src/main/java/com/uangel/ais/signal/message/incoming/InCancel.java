@@ -50,16 +50,10 @@ public class InCancel {
             log.error("InCancel.receive.Exception(Terminate CancelST) ", e);
         }
 
-        // Send 487 Response
-        //try {
-            ServerTransaction inviteSt = callInfo.getInviteSt();
-            Response terminatedRes = outResponse.sendResponse(inviteSt.getRequest(), Response.REQUEST_TERMINATED, callInfo, inviteSt);
-            log.info("Outgoing Terminated Response [\r\n{}]", terminatedRes);
-            // Invite ServerTransaction
-/*        } catch (Exception e) {
-            log.error("InCancel.receive.Exception(Send487) ", e);
-        }*/
-
+        // Send 487 Response - Invite ServerTransaction
+        ServerTransaction inviteSt = callInfo.getInviteSt();
+        Response terminatedRes = outResponse.sendResponse(inviteSt.getRequest(), Response.REQUEST_TERMINATED, callInfo, inviteSt);
+        log.info("Outgoing Terminated Response [\r\n{}]", terminatedRes);
 
         // hangup, CallStop
         RmqMsgSender sender = RmqMsgSender.getInstance();

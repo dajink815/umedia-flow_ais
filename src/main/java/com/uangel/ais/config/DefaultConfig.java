@@ -35,8 +35,8 @@ public class DefaultConfig {
     private ReloadingFileBasedConfigurationBuilder<FileBasedConfiguration> userBuilder;
     private ReloadingFileBasedConfigurationBuilder<FileBasedConfiguration> devBuilder;
 
-    public DefaultConfig(String fileName) {
-        log.debug("Config Path [{}] ", fileName);
+    public DefaultConfig(String configPath) {
+        log.debug("Config Path [{}] ", configPath);
     }
 
     protected boolean load(String configPath) {
@@ -45,8 +45,6 @@ public class DefaultConfig {
             File configFile = new File(configPath + DEFAULT_CONFIG);
             File devFile = new File(configPath + DEV_CONFIG);
 
-            //builder = new ReloadingFileBasedConfigurationBuilder<FileBasedConfiguration>(INIConfiguration.class)
-            // .configure(params.fileBased().setFile(configFile).setReloadingRefreshDelay(0L));
             userBuilder = new ReloadingFileBasedConfigurationBuilder<FileBasedConfiguration>(INIConfiguration.class)
                     .configure(params.fileBased().setFile(configFile));
             devBuilder = new ReloadingFileBasedConfigurationBuilder<FileBasedConfiguration>(INIConfiguration.class)
